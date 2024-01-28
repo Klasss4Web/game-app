@@ -138,7 +138,7 @@ QuestionSectionProps) => {
               All Questions
             </Text>
           </Flex>
-          <Flex width="100%" gap=".7rem" wrap="wrap">
+          {/* <Flex width="100%" gap=".7rem" wrap="wrap">
             {formValues?.answerFields?.map(
               (item: AnswerFields, index: number) => (
                 <Flex
@@ -155,11 +155,10 @@ QuestionSectionProps) => {
                   borderRadius=".5rem"
                 >
                   <Text>{index + 1}</Text>
-                  {/* <Text>{item?.question}</Text> */}
                 </Flex>
               )
             )}
-          </Flex>
+          </Flex> */}
         </Box>
         <Divider />
         {/* {tabToShow !== "allQuestions" && ( */}
