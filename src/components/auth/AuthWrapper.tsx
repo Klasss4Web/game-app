@@ -7,7 +7,7 @@ import "aos/dist/aos.css";
 
 import { COLORS } from "@/constants/colors";
 import useIsMounted from "@/hooks/useIsMounted";
-import { FullPageLoader } from "@/components/FullPageLoader";
+import { FullPageLoader } from "@/components/common/FullPageLoader";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -27,9 +27,9 @@ const AuthWrapper: React.FunctionComponent<AuthWrapperProps> = ({
       width="100%"
       justify="center"
       align="center"
-      backgroundImage="/images/loginBg.png"
+      backgroundImage="/images/loginBg.jpg"
       h="100vh"
-      // data-aos="zoom-in"
+      data-aos="zoom-in"
       objectFit="cover"
       bgRepeat="no-repeat"
       bgPos="center"

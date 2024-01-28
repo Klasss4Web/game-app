@@ -21,18 +21,20 @@
     "@emotion/styled": "^11.11.0",
     "@tanstack/react-query": "^4.32.6",
     "@tanstack/react-query-devtools": "^4.32.6",
+    "@types/socket.io-client": "^3.0.0",
     "aos": "^2.3.4",
     "axios": "^1.6.2",
     "framer-motion": "^10.16.12",
     "jwt-decode": "^4.0.0",
-    "next": "14.0.4",
+    "next": "14.0.3",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.0.1",
     "react-simple-star-rating": "^5.1.7",
     "react-slick": "^0.29.0",
     "react-timer-hook": "^3.0.7",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.12.1",

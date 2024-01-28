@@ -1,8 +1,14 @@
 "use client";
 
-export const USER_DETAILS = "profile";
-export const TOKEN = "#ART#PORT"
-export const REFRESH_TOKEN = "#ART#PORT#REF";
+import {
+  ACCESS_TOKEN,
+  LOGGED_IN_USER,
+  REFRESH_TOKEN,
+} from "@/constants/appConstants";
+
+// export const USER_DETAILS = "profile";
+// export const TOKEN = "#ART#PORT"
+// export const REFRESH_TOKEN = "#ART#PORT#REF";
 
 export const setLocalStorageItem = <T>(key: string, data: T): void => {
   if (typeof window !== "undefined") {
@@ -55,4 +61,10 @@ export const clearLocalStorage = (): void => {
   if (typeof window !== "undefined") {
     localStorage.clear();
   }
+};
+
+export const removeAllStorageItems = () => {
+  removeLocalStorageItem(LOGGED_IN_USER);
+  removeLocalStorageItem(ACCESS_TOKEN);
+  removeLocalStorageItem(REFRESH_TOKEN);
 };

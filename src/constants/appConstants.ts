@@ -9,4 +9,10 @@ export const APP_CONSTANTS = {
 
 export const TABLE_ROWS = 15;
 
+export const SAVED_ITEMS = {
+  participant: "participant",
+};
+
 export const LOGGED_IN_USER = "#Gen#Ad";
+export const ACCESS_TOKEN = "#Gen#Acc";
+export const REFRESH_TOKEN = "#Gen#Ref";

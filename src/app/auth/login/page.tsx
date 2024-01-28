@@ -1,15 +1,12 @@
 "use client";
 
 import { errorNotifier } from "@/app/providers";
-import { CustomBtn } from "@/components/CustomBtn";
+import { CustomBtn } from "@/components/common/CustomBtn";
 import AuthWrapper from "@/components/auth/AuthWrapper";
-// import CustomLink from "@/components/common/CustomLink";
-// import { warningToast } from "@/components/common/NotificationHandler";
+import { ACCESS_TOKEN, LOGGED_IN_USER, REFRESH_TOKEN } from "@/constants/appConstants";
 import { COLORS } from "@/constants/colors";
 import { ROUTES } from "@/constants/pageRoutes";
-// import axiosInstance from "@/services/api";
-// import http, { AUTH_ROUTES } from "@/services/api";
-import { TOKEN, setLocalStorageItem } from "@/utils/localStorage";
+import { setLocalStorageItem, setLocalStorageString } from "@/utils/localStorage";
 import {
   Flex,
   FormLabel,
@@ -24,14 +21,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEnvelope, FaEye } from "react-icons/fa";
-
-//TODO: to be removed
-
-type FormValues = {
-  email: string;
-  password: string;
-  remember: boolean;
-};
+import CustomLink from "@/components/common/CustomLink";
+import { login } from "./service";
 
 const initialEmail = "immanueldiai@gmail.com";
 const initialPassword = "qwerty123456";
@@ -39,8 +30,8 @@ const initialPassword = "qwerty123456";
 const Login: React.FunctionComponent = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState(initialEmail);
-  const [password, setPassword] = useState(initialPassword);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = () => {
     if (!email || !password)
@@ -48,32 +39,35 @@ const Login: React.FunctionComponent = () => {
         "You have not entered your email address and password"
       );
 
+    // TO BE REMOVED
+    // setLocalStorageItem(LOGGED_IN_USER, { role: "dummyToken" });
     router.push(ROUTES.create_experience);
-    // mutate();
+    const payload = {
+      email,
+      password,
+    };
+    mutate(payload);
   };
 
-  // const { mutate, isLoading } = useMutation({
-  //   mutationFn: async () => {
-  //     const { data } = await axiosInstance.post(AUTH_ROUTES.LOGIN, {
-  //       email,
-  //       password,
-  //     });
-  //     setLocalStorageItem("loggedinUser", data?.data);
-  //     setLocalStorageItem(TOKEN, data?.data?.access_token);
-  //     return data;
-  //   },
-  //   onSuccess: (loggedInData) => {
-  //     console.log("loggedInData", loggedInData);
-  //     if (loggedInData?.data?.role === "artisan") {
-  //       router.push(ROUTES.artisanHome);
-  //     } else {
-  //       router.push(ROUTES.artisans);
-  //     }
-  //   },
-  //   onError: (error: any) => {
-  //     errorNotifier(error?.response?.data?.message);
-  //   },
-  // });
+  const { mutate, isLoading } = useMutation({
+    mutationFn: login,
+    onSuccess: (loggedInData) => {
+      console.log("loggedInData", loggedInData);
+      setLocalStorageItem(LOGGED_IN_USER, loggedInData?.data);
+      setLocalStorageString(ACCESS_TOKEN, loggedInData?.data?.access_token)
+      setLocalStorageString(REFRESH_TOKEN, loggedInData?.data?.refresh_token);
+      // setLocalStorageItem(TOKEN, loggedInData?.data?.access_token);
+      // if (loggedInData?.data?.role === "admin") {
+      //   router.push(ROUTES.my_experience);
+      // }
+      router.push(ROUTES.my_experience);
+    },
+    onError: (error) => {
+      console.error("Mutation error", error);
+    },
+  });
+
+  console.log("showPassworddd", showPassword);
 
   return (
     <AuthWrapper>
@@ -82,8 +76,8 @@ const Login: React.FunctionComponent = () => {
           alt="App Logo"
           width={100}
           height={80}
-          src=""
-          style={{ cursor: "pointer" }}
+          src="/images/loginBg.jpg"
+          style={{ cursor: "pointer", borderRadius: "50%" }}
           onClick={() => router.push(ROUTES.home)}
         />
         <Flex direction="column" align="center">
@@ -143,15 +137,23 @@ const Login: React.FunctionComponent = () => {
         </InputGroup>
 
         <Flex justify="center" my=".5rem">
-          {/* <CustomLink to={ROUTES.forgotPassword} text="Forgot Password?" /> */}
+          <CustomLink to={ROUTES.forgotPassword} text="Forgot Password?" />
         </Flex>
 
         <CustomBtn
           text="Sign In"
-          loading={false}
-          handleSubmit={handleLogin}
           bg={COLORS.secondary}
+          loading={isLoading}
+          handleSubmit={handleLogin}
         />
+        <Flex justify="center" my=".5rem">
+          <Text>Dont have an account yet?</Text>
+          <CustomLink
+            to={ROUTES.registration}
+            text="Sign Up"
+            color={COLORS.blue}
+          />
+        </Flex>
       </Flex>
     </AuthWrapper>
   );

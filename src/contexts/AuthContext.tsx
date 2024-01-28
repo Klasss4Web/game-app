@@ -1,10 +1,15 @@
-import { LOGGED_IN_USER } from "@/constants/appConstants";
+"use client";
+
+import { ACCESS_TOKEN, LOGGED_IN_USER } from "@/constants/appConstants";
 import { ROUTES } from "@/constants/pageRoutes";
 import { LoggedInUser } from "@/types/user";
 import {
   getLocalStorageItem,
+  getLocalStorageString,
+  removeAllStorageItems,
   removeLocalStorageItem,
 } from "@/utils/localStorage";
+import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +19,9 @@ import {
   useContext,
   ReactNode,
 } from "react";
+import { refreshAccessToken } from "./service";
+import { FullPageLoader } from "@/components/common/FullPageLoader";
+import WelcomeScreen from "@/components/common/WelcomeScreen";
 
 export const AuthContext = createContext({});
 
@@ -22,18 +30,26 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [loggedinUser, setLoggedinUser] = useState<LoggedInUser | null>(null);
   const router = useRouter();
 
+  // const { data: refreshToken, isLoading } = useQuery({
+  //   queryKey: ["refresh-token"],
+  //   queryFn: refreshAccessToken,
+  // });
+
   useEffect(() => {
-    const credentials = getLocalStorageItem<LoggedInUser>(LOGGED_IN_USER);
+    const user = getLocalStorageItem<LoggedInUser>(LOGGED_IN_USER);
+    const credentials = getLocalStorageString(ACCESS_TOKEN);
     if (credentials) {
       // const parsedData = credentials ? JSON.parse(credentials) : null;
-      setLoggedinUser(credentials);
-      const decoded = jwtDecode(credentials?.access_token);
+      setLoggedinUser(user);
+      // console.log(credentials, "cred");
+      const decoded = jwtDecode(credentials as string);
       const expiryDate = new Date((decoded?.exp as number) * 1000);
-      if (new Date() > expiryDate) {
-        removeLocalStorageItem(LOGGED_IN_USER);
-        router.push(ROUTES.login);
+      if (new Date().getTime() > expiryDate.getTime()) {
+        refreshAccessToken();
+        // removeAllStorageItems();
+        // router.push(ROUTES.login);
       } else {
-        // dispatch(authSetUser({ ...decoded }));
+        router.push(ROUTES.my_experience);
         setIsLoggedin(true);
       }
     } else {
@@ -43,7 +59,9 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line
   }, []);
 
-  return (
+  return !isLoggedin ? (
+    <WelcomeScreen />
+  ) : (
     <AuthContext.Provider
       value={{ isLoggedin, setIsLoggedin, loggedinUser, setLoggedinUser }}
     >

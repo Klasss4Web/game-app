@@ -1,10 +1,26 @@
-
 /* ScrollBar Stylings*/
 
 * {
   margin: 0;
   padding: 0;
 }
+
+.gradient-background {
+  background: radial-gradient(circle, #001f3f, #001a35, #000000);
+
+  /* height: 100vh; */
+}
+
+@keyframes vibrate {
+   0%, 100% { transform: translate(0, 0); }
+  25%, 75% { transform: translate(2px, 2px); }
+  50% { transform: translate(-2px, -2px); }
+}
+
+.vibrating-image {
+  animation: vibrate 0.1s infinite;
+}
+
 
 .scroll {
   cursor: pointer;
@@ -60,7 +76,8 @@
   left: 2rem !important;
 }
 
-.card-animate, .icon-animate {
+.card-animate,
+.icon-animate {
   transition: all 0.3s ease-in-out;
 }
 
@@ -69,8 +86,8 @@
 }
 
 .icon-animate:hover {
- transform: scale(1.1);
- color: aqua;
+  transform: scale(1.1);
+  color: aqua;
 }
 
 /* SLIDER */
@@ -158,7 +175,6 @@
     grid-template-columns: repeat(100, 85%);
   }
   .slider_box_button_btn_icon {
-    /* border: 1px solid gray; */
     padding: 0.5rem;
   }
   .slider {
@@ -184,7 +200,4 @@
   height: 100%;
   z-index: 1;
   object-fit: cover;
-
-  /* opacity: 0.2; */
-  /* filter: brightness(36%) opacity(0.3); */
 }

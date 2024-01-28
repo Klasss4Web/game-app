@@ -4,8 +4,8 @@ import { Box, Divider, Flex } from "@chakra-ui/react";
 import { COLORS } from "@/constants/colors";
 import { ROUTES } from "@/constants/pageRoutes";
 import { useRouter } from "next/navigation";
-import CustomLink from "../CustomLink";
-import { CustomBtn } from "../CustomBtn";
+import CustomLink from "../common/CustomLink";
+import { CustomBtn } from "../common/CustomBtn";
 
 const NavigationMenu = () => {
   const router = useRouter();
@@ -29,14 +29,14 @@ const NavigationMenu = () => {
       <Divider />
       <CustomLink to={ROUTES.registration} text="Artisans" />
       <Divider />
-      <CustomLink
+      {/* <CustomLink
         to={ROUTES.marketPlace}
         text="Market Place"
       />
       <Divider />
       <CustomLink to={ROUTES.programmes} text="Programmes" />
       <Divider />
-      <CustomLink to={ROUTES.contact} text="Contact Us" />
+      <CustomLink to={ROUTES.contact} text="Contact Us" /> */}
       <Divider />
       <Box width="20rem">
         <CustomBtn

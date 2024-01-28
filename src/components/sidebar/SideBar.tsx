@@ -11,7 +11,7 @@ import { APP_CONSTANTS, LOGGED_IN_USER } from "@/constants/appConstants";
 import { COLORS } from "@/constants/colors";
 import { SidebarProps } from "@/types/navigation";
 import { NavLink } from "./NavLink";
-import { BOTTOM_NAV_LINKS, NAV_LINKS, ROUTES } from "@/constants/pageRoutes";
+import { NAV_LINKS, ROUTES } from "@/constants/pageRoutes";
 import { usePathname } from "next/navigation";
 import { getLocalStorageItem } from "@/utils/localStorage";
 import { AuthUserType } from "@/types/user";
@@ -26,7 +26,7 @@ const SideBar = ({
   tabWidth,
 }: SidebarProps): JSX.Element => {
   const pathname = usePathname();
-    const loggedinUser = getLocalStorageItem(LOGGED_IN_USER) as AuthUserType;
+  const loggedinUser = getLocalStorageItem(LOGGED_IN_USER) as AuthUserType;
 
   console.log("PATHNAME", pathname);
 
@@ -40,18 +40,14 @@ const SideBar = ({
       ? "1.2rem 1.2rem"
       : ".8rem 1rem";
 
-  const adminUser = loggedinUser?.role?.toLowerCase() === "admin";
-  const SIDE_BAR_ROUTES = adminUser ? NAV_LINKS : BOTTOM_NAV_LINKS
-
+  console.log("TAB WIDTH", tabWidth);
   return (
     <Stack
       spacing={".1rem"}
       h="100vh"
       alignItems={"flex-start"}
-      bg={COLORS.u_black}
-      //   color={sidebarTextColor}
+      bg={COLORS.blue}
       borderRight={`1px solid ${COLORS.bgGrey}`}
-      // px={["1rem", "1rem", "1.4rem"]}
     >
       <Flex
         my="4rem"
@@ -78,19 +74,19 @@ const SideBar = ({
           />
         </Box>
       </Flex>
-      {SIDE_BAR_ROUTES.map((link) => (
+      {NAV_LINKS.map((link) => (
         <NavLink href={link.route} exact key={link.key}>
           <Flex
             width="100%"
             direction={["column", "column", "row"]}
             bg={pathname === link.route ? COLORS.secondary : ""}
-            color={pathname === link.route ? COLORS.u_black : COLORS.white}
+            color={pathname === link.route ? COLORS.orange : COLORS.white}
             padding={[".3rem", ".4rem", ".9rem"]}
             align="center"
             gap={[".2rem", ".2rem", ".6rem"]}
             fontSize={[".8rem", ".9rem", "1rem"]}
             borderLeft={
-              pathname === link.route ? `.5rem solid ${COLORS.darkGrey}` : ""
+              pathname === link.route ? `.5rem solid ${COLORS.orange}` : ""
             }
             borderRadius=".3rem"
           >

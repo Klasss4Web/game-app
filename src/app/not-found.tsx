@@ -58,11 +58,12 @@
 
 // export default NotFound;
 
-
 const NotFound = () => {
-  <div>
-    <p>Not Found</p>
-  </div>
-}
+  return (
+    <div>
+      <p>Not Found</p>
+    </div>
+  );
+};
 
 export default NotFound;

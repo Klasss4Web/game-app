@@ -57,7 +57,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <UserProfileContextProvider>
           <ChakraProvider theme={Theme}>
-           
               {children}
             <ToastContainer />
             <ReactQueryDevtools position="bottom-right" initialIsOpen={false} />

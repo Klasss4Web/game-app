@@ -1,16 +1,8 @@
 "use client";
-
-import { CompleteProfile, PersonalDetails } from "@/types/user";
-import {
-  USER_DETAILS,
-  getLocalStorageItem,
-  getLocalStorageString,
-} from "@/utils/localStorage";
-import { useQuery } from "@tanstack/react-query";
 import { createContext, useState } from "react";
 
 export const UserProfileContext = createContext({
-  state: {} as CompleteProfile,
+  state: {} as any,
   dispatch: ({}) => {},
   // isLoadingReview: false,
 });

@@ -44,9 +44,12 @@ export type FormControlProps = {
   placeholder: string;
   label?: string;
   bg?: string;
+  mb?: string;
   name: string;
   value: string | number;
   color?: string;
+  textAlign?: "left" | "center";
+  fontSize?: string[];
   isInvalid?: boolean;
   isRequired?: boolean;
   borderColor?: string;
@@ -67,4 +70,14 @@ export type Base64Object = {
   name: string;
   blob: string | undefined;
   size: number;
+};
+
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+export type RegisterPayload = LoginPayload & {
+  first_name: string;
+  last_name: string;
 };

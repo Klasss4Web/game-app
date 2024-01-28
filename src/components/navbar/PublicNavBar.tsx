@@ -14,8 +14,8 @@ import { useRouter } from "next/navigation";
 import NavigationMenu from "./NavigationMenu";
 import { APP_CONSTANTS } from "@/constants/appConstants";
 import Link from "next/link";
-import CustomLink from "../CustomLink";
-import { CustomBtn } from "../CustomBtn";
+import CustomLink from "../common/CustomLink";
+import { CustomBtn } from "../common/CustomBtn";
 
 type NavProps = {
   bg?: string;
@@ -117,19 +117,19 @@ const PublicNavBar = ({ btnBg, color, hoverBg, bg, position }: NavProps) => {
               hoverBg={hoverBg}
             />
 
-            <CustomLink
+            {/* <CustomLink
               text="Artisans"
               to={ROUTES.marketPlace}
               color={color || COLORS.white}
               hoverBg={hoverBg}
-            />
+            /> */}
             <CustomLink
               text="Apply for License"
               to={ROUTES.registration}
               color={color || COLORS.white}
               hoverBg={hoverBg}
             />
-            <CustomLink
+            {/* <CustomLink
               text="Market Place"
               to={ROUTES.marketPlace}
               color={color || COLORS.white}
@@ -140,7 +140,7 @@ const PublicNavBar = ({ btnBg, color, hoverBg, bg, position }: NavProps) => {
               to={ROUTES.contact}
               color={color || COLORS.white}
               hoverBg={hoverBg}
-            />
+            /> */}
           </Flex>
           <Flex width="15%" justify="end">
             <CustomBtn

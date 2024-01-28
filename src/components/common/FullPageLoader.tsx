@@ -9,14 +9,14 @@ type LoadingProps = {
 export const FullPageLoader = ({ h }: LoadingProps): JSX.Element => {
   return (
     <Flex
-      bg={COLORS.white}
+      bg={COLORS.secondary}
       justifyContent="center"
       alignItems="center"
       height={h || "100vh"}
       width="100%"
       backgroundColor={"inherit"}
     >
-      <Spinner color={COLORS.secondary} w="5rem" h="5rem" speed="0.65s" />
+      <Spinner color={COLORS.orange} w="5rem" h="5rem" speed="0.65s" />
     </Flex>
   );
 };
