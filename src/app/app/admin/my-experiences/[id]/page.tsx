@@ -27,6 +27,7 @@ import { socketBaseURL } from "@/services/api";
 import {
   SOCKET_EVENTS,
   getExperienceQuestion,
+  getParticipantsCurrentScore,
   setActiveQuestion,
 } from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
@@ -78,9 +79,9 @@ const ExperienceDashboard = () => {
 
   useEffect(() => {
     // const audioElement = new Audio("/audio/notification.wav");
-    // const audioElement = new Audio("/audio/backgroundSound.mp3");
+    const audioElement = new Audio("/audio/backgroundSound.mp3");
     // audioElement.loop = true;
-    // audioElement.play();
+    audioElement.play();
     const token = getLocalStorageString(ACCESS_TOKEN);
     setLoading(true);
     const payload = {
@@ -128,6 +129,7 @@ const ExperienceDashboard = () => {
       }
     );
 
+    // getParticipantsCurrentScore(payload, socketClient);
     // socketClient.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
     //   console.log("ADMIN JOIN EXP RESP", data);
     // });
@@ -271,7 +273,7 @@ const ExperienceDashboard = () => {
       </Flex>
       <QuestionSection
         experience_id={specificExperience?.data?.id}
-        setAllQuestions={setAllQuestions}
+        // setAllQuestions={setAllQuestions}
         allQuestions={allQuestions}
         setSliceIndex={setSliceIndex}
         sliceIndex={sliceIndex}

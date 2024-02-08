@@ -33,7 +33,7 @@ type QuestionSectionProps = {
   setSliceIndex: (arg: number) => void;
   sliceIndex: number;
   allQuestions: Questions[];
-  setAllQuestions: (arg: []) => void;
+  // setAllQuestions: (arg: []) => void;
   setActiveQuestion: (
     payload: ActiveQuestionPayload,
     questionNo: number
@@ -46,7 +46,6 @@ const QuestionSection = ({
   sliceIndex,
   setSliceIndex,
   allQuestions,
-  setAllQuestions,
   participants,
   setActiveQuestion,
 }: // selectedQuestion,

@@ -19,6 +19,9 @@ export const SOCKET_EVENTS = {
   rejoinExperience: "rejoinExperience",
   rejoinExperienceError: "rejoinExperienceError",
   rejoinExperienceResponse: "rejoinExperienceResponse",
+  adminEndExperience: "endExperience",
+  adminEndExperienceResponse: "endExperienceResponse",
+  adminEndExperienceError: "endExperienceError",
   adminStartExperience: "startExperience",
   experienceReactivity: "experienceReactivity",
   adminStartExperienceError: "startExperienceError",
@@ -26,6 +29,9 @@ export const SOCKET_EVENTS = {
   adminGetExperienceQuestion: "getExperienceQuestion",
   adminGetExperienceQuestionResponse: "getExperienceQuestionResponse",
   adminSetActiveQuestion: "setActiveQuestion",
+  getParticipantsScore: "getParticipantsScore",
+  getParticipantsScoreError: "getParticipantsScoreError",
+  getParticipantsScoreResponse: "getParticipantsScoreResponse",
   adminSetActiveQuestionResponse: "setActiveQuestionResponse",
   adminSetActiveQuestionError: "setActiveQuestionError",
   adminGetExperienceParticipants: "getExperienceParticipant",
@@ -234,7 +240,6 @@ export async function setActiveQuestion(
       authorization: `Bearer ${token}`,
     },
   });
-  // console.log("socketClient", socketClient);
   socketClient.emit(
     SOCKET_EVENTS.adminSetActiveQuestion,
     payload,
@@ -316,5 +321,45 @@ export function answerExperienceQuestion(
     );
     errorNotifier(error?.message);
     setLoading(false);
+  });
+}
+
+export function getParticipantsCurrentScore(
+  payload: any,
+  socketClient: any
+  // setLoading: (arg: boolean) => void
+) {
+  // setLoading(true);
+  // socketClient = io(socketBaseURL as string);
+  console.log("socketClient", socketClient);
+
+  socketClient.emit(
+    SOCKET_EVENTS.getParticipantsScore,
+    payload,
+    (response: any) => {
+      console.log(
+        response,
+        `EMIT RESPONSE FOR ${SOCKET_EVENTS.getParticipantsScore}`
+      ); // ok
+      // setLoading(false);
+      successNotifier("Leader Board Updated");
+    }
+  );
+
+  socketClient.on(SOCKET_EVENTS.getParticipantsScoreResponse, (data: any) => {
+    console.log(
+      `MSG RESP FOR ${SOCKET_EVENTS.getParticipantsScoreResponse}`,
+      data
+    );
+    successNotifier("Leader Board Updated");
+    // setLoading(false);
+  });
+  socketClient.on(SOCKET_EVENTS.getExperienceParticipantError, (error: any) => {
+    console.log(
+      `MSG ERROR FOR ${SOCKET_EVENTS.getExperienceParticipantError}`,
+      error
+    );
+    errorNotifier(error?.message);
+    // setLoading(false);
   });
 }

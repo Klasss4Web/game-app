@@ -14,7 +14,11 @@ const GameExperienceCard = ({
   minutes,
   seconds,
 }: CountdownControlCardProps) => {
-  console.log("SECONDS", seconds);
+  // console.log("SECONDS", seconds);
+
+  const countdownSeconds = 30; //TO BE REPLACED WITH COUNTDOWN SECONDS FROM THE BACKEND
+  const totalSeconds = minutes * 60 + seconds;
+  const timeLeft = countdownSeconds / totalSeconds;
   return (
     <GameControlExperienceCard>
       <Text fontSize="1.4rem">
@@ -33,7 +37,7 @@ const GameExperienceCard = ({
         size="xs"
         width="100%"
         height=".6rem"
-        value={isFinished ? 100 : 0}
+        value={!isFinished ? 100 : timeLeft * 100}
         // background={COLORS.white}
         borderRadius=".4rem"
         isIndeterminate={isFinished}
