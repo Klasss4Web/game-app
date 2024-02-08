@@ -5,6 +5,7 @@ import { LoginPayload } from "@/types/form";
 export const login = async (payload: LoginPayload) => {
   try {
     const { data } = await axiosInstance.post(API_ROUTES.LOGIN, payload);
+    console.log("TOKEN", data);
     return data;
   } catch (error: any) {
     if (error.response) {

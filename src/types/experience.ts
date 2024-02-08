@@ -12,7 +12,7 @@ export type Participants = {
 };
 
 export type ExperienceData = {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
   experience_type: string;
@@ -20,6 +20,9 @@ export type ExperienceData = {
   experience_status: string;
   participant_count: number;
   seconds_to_countdown: number;
+  question_countdown: number;
+  no_of_questions: number;
+  question_activated_at: string;
   auto_start: boolean;
   next_experience_id: number;
   user_id: number;

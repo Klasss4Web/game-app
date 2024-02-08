@@ -10,23 +10,27 @@ export const stats: Stats[] = [
     icon: IoIosPeople,
     statNumber: "0 of 20",
     statLabel: "PARTICIPANTS",
+    key: "participant_count",
   },
   {
     id: "2",
     icon: MdQuestionMark,
     statNumber: "1 of 28",
     statLabel: "QUESTIONS",
+    key: "no_of_questions",
   },
   {
     id: "3",
     icon: FaCheck,
     statNumber: "1",
     statLabel: "ANSWERS",
+    key: "",
   },
   {
     id: "4",
     icon: FaRegCheckCircle,
     statNumber: "1",
     statLabel: "Q1 ANSWERS",
+    key: "",
   },
 ];

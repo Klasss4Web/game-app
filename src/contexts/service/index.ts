@@ -9,9 +9,9 @@ import {
 
 export const refreshAccessToken = async () => {
   const storedRefreshToken = getLocalStorageString(REFRESH_TOKEN);
-  if (!storedRefreshToken) {
-    return;
-  }
+  // if (!storedRefreshToken) {
+  //   return;
+  // }
   try {
     const { data } = await axiosInstance.get(API_ROUTES.REFRESH_TOKEN);
     setLocalStorageString(ACCESS_TOKEN, data?.data?.access_token);

@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  FormControl,
+  FormLabel,
+  Switch,
+  Text,
+} from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,21 +24,37 @@ import QuestionSection from "./components/Questions";
 import { getAllQuestions, getSpecificExperience } from "./service";
 import { FullPageLoader } from "@/components/common/FullPageLoader";
 import { socketBaseURL } from "@/services/api";
-import { SOCKET_EVENTS } from "@/services/socket";
+import {
+  SOCKET_EVENTS,
+  getExperienceQuestion,
+  setActiveQuestion,
+} from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
 import { getLocalStorageString } from "@/utils/localStorage";
 import { ACCESS_TOKEN } from "@/constants/appConstants";
 import { io } from "socket.io-client";
-import { Questions } from "@/types/questions";
+import { ActiveQuestionPayload, Questions } from "@/types/questions";
 import { Participants } from "@/types/experience";
+import { useTimer } from "react-timer-hook";
+import { setTimer } from "@/utils/setTimer";
+// import notification from "/audio/notification.wav";
 
 const ExperienceDashboard = () => {
   const params = useParams();
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeLoading, setActiveLoading] = useState(false);
   const [participants, setParticipants] = useState<Participants[]>([]);
+  const [activeQuestionResponse, setActiveQuestionResponse] =
+    useState<Questions>({} as Questions);
   const [sliceIndex, setSliceIndex] = useState(0);
   const [allQuestions, setAllQuestions] = useState<Questions[]>([]);
+
+  const { seconds, minutes, isRunning, resume, restart, pause } = useTimer({
+    expiryTimestamp: setTimer(),
+    autoStart: false,
+    onExpire: () => console.warn("onExpire called"),
+  });
 
   const { data: specificExperience, isLoading } = useQuery({
     queryKey: ["specificExperience", params?.id],
@@ -40,13 +63,30 @@ const ExperienceDashboard = () => {
     enabled: !!params?.id,
   });
 
-  const selectedQuestion = allQuestions.find(
-    (question) => question?.order === sliceIndex + 1
-  );
+  const handleSetActiveQuestion = (
+    payload: ActiveQuestionPayload,
+    questNo: number
+  ) => {
+    setActiveQuestion(
+      payload,
+      setActiveLoading,
+      setActiveQuestionResponse,
+      restart
+    );
+    setSliceIndex(questNo);
+  };
 
   useEffect(() => {
+    // const audioElement = new Audio("/audio/notification.wav");
+    // const audioElement = new Audio("/audio/backgroundSound.mp3");
+    // audioElement.loop = true;
+    // audioElement.play();
     const token = getLocalStorageString(ACCESS_TOKEN);
     setLoading(true);
+    const payload = {
+      experience_id: params?.id,
+    };
+    getExperienceQuestion(payload, setLoading, setAllQuestions);
     const socketClient = io(socketBaseURL as string, {
       extraHeaders: {
         authorization: `Bearer ${token}`,
@@ -87,9 +127,19 @@ const ExperienceDashboard = () => {
         setLoading(false);
       }
     );
+
+    // socketClient.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
+    //   console.log("ADMIN JOIN EXP RESP", data);
+    // });
     return () => {
       socketClient.removeAllListeners(
+        SOCKET_EVENTS.adminGetExperienceParticipants
+      );
+      socketClient.removeAllListeners(
         SOCKET_EVENTS.getExperienceParticipantResponse
+      );
+      socketClient.removeAllListeners(
+        SOCKET_EVENTS.getExperienceParticipantError
       );
     };
   }, [params?.id, allQuestions.length, participants.length]);
@@ -130,13 +180,16 @@ const ExperienceDashboard = () => {
         />
         <ActiveQuestionsCard
           experience_id={specificExperience?.data?.id}
-          // selectedQuestion={selectedQuestion as Questions}
           setSliceIndex={setSliceIndex}
           sliceIndex={sliceIndex}
           allQuestions={allQuestions}
-          // totalQuestions={allQuestions?.length}
+          setActiveQuestion={handleSetActiveQuestion}
         />
-        <GameExperienceCard isFinished={isFinished} />
+        <GameExperienceCard
+          isFinished={isRunning}
+          minutes={minutes}
+          seconds={seconds}
+        />
       </Flex>
       <Flex
         direction={["column", "column", "row"]}
@@ -147,6 +200,72 @@ const ExperienceDashboard = () => {
         <GameUrlCard experience={specificExperience?.data} />
         <GameControlExperienceCard>
           <Text fontSize="1.4rem">Viewer Controls</Text>
+          <Flex width="100%" wrap="wrap">
+            <FormControl
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="25%"
+            >
+              <Switch id="manually-start" size="lg" />
+              <FormLabel
+                htmlFor="manually-start"
+                mb="0"
+                fontSize=".7rem"
+                textAlign="center"
+              >
+                Manually Start Questions
+              </FormLabel>
+            </FormControl>
+            <FormControl
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="25%"
+            >
+              <Switch id="live-results" size="lg" />
+              <FormLabel
+                htmlFor="live-results"
+                mb="0"
+                fontSize=".7rem"
+                textAlign="center"
+              >
+                Show Live Answer Results
+              </FormLabel>
+            </FormControl>
+            <FormControl
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="25%"
+            >
+              <Switch id="correct-answers" size="lg" />
+              <FormLabel
+                htmlFor="correct-answers"
+                mb="0"
+                fontSize=".7rem"
+                textAlign="center"
+              >
+                Show Correct Answers
+              </FormLabel>
+            </FormControl>
+            <FormControl
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="25%"
+            >
+              <Switch id="question-notes" size="lg" />
+              <FormLabel
+                htmlFor="question-notes"
+                mb="0"
+                fontSize=".7rem"
+                textAlign="center"
+              >
+                Show Question Notes
+              </FormLabel>
+            </FormControl>
+          </Flex>
         </GameControlExperienceCard>
         <StatsCard experience={specificExperience?.data} />
       </Flex>
@@ -157,7 +276,7 @@ const ExperienceDashboard = () => {
         setSliceIndex={setSliceIndex}
         sliceIndex={sliceIndex}
         participants={participants}
-        // selectedQuestion={selectedQuestion}
+        setActiveQuestion={handleSetActiveQuestion}
       />
     </Box>
   );

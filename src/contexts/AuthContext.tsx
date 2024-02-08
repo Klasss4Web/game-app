@@ -46,8 +46,6 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       const expiryDate = new Date((decoded?.exp as number) * 1000);
       if (new Date().getTime() > expiryDate.getTime()) {
         refreshAccessToken();
-        // removeAllStorageItems();
-        // router.push(ROUTES.login);
       } else {
         router.push(ROUTES.my_experience);
         setIsLoggedin(true);

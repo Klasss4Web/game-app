@@ -15,7 +15,6 @@ import SideBar from "@/components/sidebar/SideBar";
 import { connect, disconnect } from "@/services/socket";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const userId = "dummy id";
   const isMounted = useIsMounted();
   const loggedinUser = getLocalStorageItem(LOGGED_IN_USER) as AuthUserType;
   console.log("loggedinUserrrr", loggedinUser);

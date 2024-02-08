@@ -13,8 +13,11 @@ import {
   answerExperienceQuestion,
   socketClient,
 } from "@/services/socket";
-import { errorNotifier } from "@/app/providers";
+import { errorNotifier, successNotifier } from "@/app/providers";
 import { formatToIsoDate } from "@/utils/dateFormat";
+import { getLocalStorageItem } from "@/utils/localStorage";
+import { SAVED_ITEMS } from "@/constants/appConstants";
+import { useSocket } from "@/contexts/SocketContext";
 
 type QuestionsProps = {
   questions: Questions;
@@ -38,9 +41,14 @@ const QuestionBoard = ({
   const [btnLoading, setBtnLoading] = useState(false);
   const [selectedBtnId, setSelectedBtnId] = useState("");
 
+  const { socketConnection } = useSocket();
+  console.log("socketConnection SUBMIT", socketConnection);
+
   useEffect(() => {
     setLoading(false);
-    socketClient.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
+    socketConnection.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
+      const audioElement = new Audio("/audio/notification1.wav");
+      audioElement.play();
       console.log(
         `EXP MSG RESP FOR ${SOCKET_EVENTS.experienceReactivity}`,
         data
@@ -60,20 +68,73 @@ const QuestionBoard = ({
     return () => {
       socketClient.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
     };
-  }, [setResponse, questions.id]);
+  }, [setResponse, restart, questions?.id, selectedBtnId, socketConnection]);
 
-  const handleSubmitAnswer = (answer_id: string) => {
+  function answerExperienceQuestions(
+    payload: any,
+    setLoading: (arg: boolean) => void
+  ) {
+    // const participant = getLocalStorageItem<LoggedInParticipant>(
+    //   SAVED_ITEMS.participant
+    // );
+    setLoading(true);
+    // socketClient = io(socketBaseURL as string);
+    console.log("socketClient", socketConnection);
+
+    socketConnection.emit(
+      SOCKET_EVENTS.answerExperienceQuestion,
+      payload,
+      (response: any) => {
+        console.log(
+          response,
+          `EMIT RESPONSE FOR ${SOCKET_EVENTS.answerExperienceQuestion}`
+        ); // ok
+        setLoading(false);
+        successNotifier("Submitted...");
+      }
+    );
+
+    socketConnection.on(
+      SOCKET_EVENTS.answerExperienceQuestionResponse,
+      (error: any) => {
+        console.log(
+          `MSG RESP FOR ${SOCKET_EVENTS.answerExperienceQuestionResponse}`,
+          error
+        );
+        successNotifier("Submitted...");
+        // errorNotifier(error?.message);
+        setLoading(false);
+      }
+    );
+    socketConnection.on(
+      SOCKET_EVENTS.answerExperienceQuestionError,
+      (error: any) => {
+        console.log(
+          `MSG RESP FOR ${SOCKET_EVENTS.answerExperienceQuestionError}`,
+          error
+        );
+        errorNotifier(error?.message);
+        setLoading(false);
+      }
+    );
+  }
+
+  const handleSubmitAnswer = async (answer_id: string) => {
+    // const participant = getLocalStorageItem(SAVED_ITEMS.participant)
     setLoading(true);
     const payload = {
       answer_id,
       experience_id,
       question_id: questions?.id,
+      // participant_id: participant?.id,
       question_answered_at: formatToIsoDate(),
     };
     setSelectedBtnId(answer_id);
     console.log("PAYLOAD", payload, questions);
-    answerExperienceQuestion(payload, setBtnLoading);
+    answerExperienceQuestions(payload, setBtnLoading);
     pause();
+    const audioElement = new Audio("/audio/notification.wav");
+    audioElement.play();
   };
 
   // console.log("PAYLOAD", questions);
@@ -85,7 +146,7 @@ const QuestionBoard = ({
       <Box
         width="100%"
         bg={COLORS.white}
-        padding="1rem"
+        padding={["1rem .5rem", "1rem .6rem", "1rem"]}
         borderRadius=".5rem"
         textAlign="center"
       >
@@ -96,7 +157,7 @@ const QuestionBoard = ({
           width="3rem"
           height="3rem"
           position="absolute"
-          top="8%"
+          top={["15%", "15%", "8%"]}
           left="-2%"
         >
           <Text fontSize="1.6rem">{questions?.order}</Text>
@@ -107,7 +168,7 @@ const QuestionBoard = ({
         width="100%"
         justify="space-between"
         align="center"
-        padding="1rem"
+        padding={[".5rem", ".6rem", "1rem"]}
         bg={COLORS.white}
       >
         <Text

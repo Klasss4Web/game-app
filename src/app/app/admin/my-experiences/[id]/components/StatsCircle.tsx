@@ -1,11 +1,12 @@
 import { COLORS } from "@/constants/colors";
+import { ExperienceData } from "@/types/experience";
 import { Flex, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
 import React from "react";
 import { IconType } from "react-icons";
 
 type CircleProps = {
   ICON: IconType;
-  statNumber: string;
+  statNumber: number;
   statLabel: string;
 };
 

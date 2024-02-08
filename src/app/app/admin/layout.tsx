@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiMenu } from "react-icons/bi";
 
 import { APP_CONSTANTS, LOGGED_IN_USER } from "@/constants/appConstants";
@@ -14,6 +14,9 @@ import { FullPageLoader } from "@/components/common/FullPageLoader";
 import SideBar from "@/components/sidebar/SideBar";
 import { connect, disconnect } from "@/services/socket";
 import AuthContextProvider from "@/contexts/AuthContext";
+import { socketBaseURL } from "@/services/api";
+import { errorNotifier, successNotifier } from "@/app/providers";
+import { io } from "socket.io-client";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const userId = "dummy id";

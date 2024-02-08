@@ -23,6 +23,7 @@ const CountdownControlCard = ({
 }: CountdownControlCardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [startResponse, setStartResponse] = useState({});
+
   const startExperience = () => {
     setLoading(true);
     const payload = {

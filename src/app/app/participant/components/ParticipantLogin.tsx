@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomBtn } from "@/components/common/CustomBtn";
 import { Formcontrol } from "@/components/common/FormControl";
 import { COLORS } from "@/constants/colors";
@@ -36,6 +36,8 @@ const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
     // setLoading(false);
   };
 
+  
+
   console.log("RESP", experienceResponse);
   return (
     <>
@@ -50,7 +52,7 @@ const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
           bg={COLORS.white}
           borderColor={COLORS.secondary}
           textAlign="center"
-          fontSize={["3rem"]}
+          fontSize={["1.8rem", "2rem", "3rem"]}
           value={userName}
           handleChange={(e) => setUserName(e.target.value)}
         />
@@ -63,7 +65,12 @@ const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
           handleSubmit={handleJoinExperience}
         />
       </HeroSectionWrapper>
-      <Text color={COLORS.formGray} mt=".5rem" fontSize=".8rem">
+      <Text
+        textAlign="center"
+        color={COLORS.formGray}
+        mt=".5rem"
+        fontSize=".8rem"
+      >
         By signing in you accept our Privacy Policy, Terms & Conditions, & Data
         Compliance Policy.
       </Text>

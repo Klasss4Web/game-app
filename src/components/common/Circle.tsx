@@ -4,7 +4,7 @@ import React from "react";
 
 type CircleProps = {
   bg?: string;
-  top?: string;
+  top?: string[] | string;
   left?: string;
   children?: React.ReactNode;
   size?: string;

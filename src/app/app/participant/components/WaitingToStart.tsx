@@ -9,6 +9,7 @@ import HeroSectionWrapper from "../../admin/my-experiences/components/HeroSectio
 import { SOCKET_EVENTS, socketClient } from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
 import { Questions } from "@/types/questions";
+import { useSocket } from "@/contexts/SocketContext";
 
 type WaitingToStartProps = {
   setPosition: (arg: string) => void;
@@ -24,9 +25,12 @@ const WaitingToStart = ({
   const { isVibrating } = useVibration();
   // const [response, setResponse] = useState({});
 
+  const { socketConnection } = useSocket();
+  console.log("socketConnection", socketConnection);
+
   useEffect(() => {
     setLoading(false);
-    socketClient.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
+    socketConnection.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
       setResponse(data?.result?.question);
       if (data?.display_type === "status") {
         setPosition(data?.result?.experience_status);
@@ -39,16 +43,17 @@ const WaitingToStart = ({
       );
       setLoading(false);
     });
-    socketClient.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
+    socketConnection.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
       console.log(`EXP data FOR ${SOCKET_EVENTS.experienceReactivity}`, data);
-      // errorNotifier(error.message);
+      const audioElement = new Audio("/audio/notification1.wav");
+      audioElement.play();
     });
 
     return () => {
-      socketClient.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
+      socketConnection.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
       // socketClient.removeAllListeners("attachment");
     };
-  }, []);
+  }, [setResponse, setPosition, setLoading, socketConnection]);
 
   // console.log("START RESPONSE WAITING", response);
 

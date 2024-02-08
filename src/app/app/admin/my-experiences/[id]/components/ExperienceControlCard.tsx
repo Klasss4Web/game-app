@@ -11,10 +11,11 @@ const GameControlExperienceCard = ({ children }: ExperienceCardProps) => {
     <Flex
       className="card-animate"
       direction="column"
-      width="32.5%"
+      width={["100%", "100%", "32.5%"]}
       gap=".5rem"
       justify="center"
       align="center"
+      mt={["1rem", "1rem", "0"]}
       padding="1rem"
       color={COLORS.white}
       bg={COLORS.blue}

@@ -28,7 +28,7 @@ const HeroSectionWrapper = ({
       bg={bg || COLORS.bgGrey}
       borderRadius=".5rem"
       textAlign={textAlign || "center"}
-      padding="3rem"
+      padding={[".5rem", ".6rem", "3rem"]}
       my="1rem"
       gap="1rem"
     >

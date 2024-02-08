@@ -16,7 +16,12 @@ import { useMutation } from "@tanstack/react-query";
 import { CustomBtn } from "@/components/common/CustomBtn";
 import { Formcontrol } from "@/components/common/FormControl";
 import { COLORS } from "@/constants/colors";
-import { AnswerFields, OptionFields, Questions } from "@/types/questions";
+import {
+  ActiveQuestionPayload,
+  AnswerFields,
+  OptionFields,
+  Questions,
+} from "@/types/questions";
 
 import useQuestionFunctions from "../hooks/useQuestionFunctions";
 import { createQuestions } from "../service";
@@ -29,6 +34,10 @@ type QuestionSectionProps = {
   sliceIndex: number;
   allQuestions: Questions[];
   setAllQuestions: (arg: []) => void;
+  setActiveQuestion: (
+    payload: ActiveQuestionPayload,
+    questionNo: number
+  ) => void;
   participants: Participants[];
 };
 
@@ -39,6 +48,7 @@ const QuestionSection = ({
   allQuestions,
   setAllQuestions,
   participants,
+  setActiveQuestion,
 }: // selectedQuestion,
 QuestionSectionProps) => {
   const [formValues, setFormValues] = useState({
@@ -88,19 +98,20 @@ QuestionSectionProps) => {
 
   const getQuestions = () => {
     setTabToShow("allQuestions");
-    const payload = {
-      experience_id,
-    };
-    getExperienceQuestion(payload, setLoading, setAllQuestions);
+    // const payload = {
+    //   experience_id,
+    // };
+    // getExperienceQuestion(payload, setLoading, setAllQuestions);
   };
 
-  const handleSetActiveQuestion = (question_id: string) => {
+  const handleSetActiveQuestion = (question_id: string, questionNo: number) => {
     const payload = {
       experience_id,
       question_id,
     };
     console.log("ACTIVE QUES", payload);
-    setActiveQuestion(payload, setLoading, setActiveQuestionResponse);
+    setActiveQuestion(payload, questionNo);
+    // setActiveQuestion(payload, setLoading, setActiveQuestionResponse);
   };
 
   console.log(
@@ -114,13 +125,13 @@ QuestionSectionProps) => {
   );
 
   return (
-    <Box width="100%" color={COLORS.white}>
+    <Box width="100%" color={COLORS.white} mt="2rem">
       <Flex direction="column" width="100%" gap="2rem">
         <Box width={["100%", "100%", "40%"]}>
-          <Flex width="100%" justify="space-between" align="center" mb="1rem">
-            <Heading as="h3" fontSize={["1.6rem"]}>
-              Questions
-            </Heading>
+          <Heading as="h3" fontSize={["1.6rem"]}>
+            Questions
+          </Heading>
+          <Flex width="100%" justify="space-between" align="center">
             <Flex
               mt=".7rem"
               gap=".2rem"
@@ -132,10 +143,27 @@ QuestionSectionProps) => {
               }}
             >
               <BiPlusCircle size={22} />
-              <Text>Add Question</Text>
+              <Text
+                borderBottom={
+                  tabToShow === "addQuestions"
+                    ? `.3rem solid ${COLORS.orange}`
+                    : ""
+                }
+              >
+                Add Question
+              </Text>
             </Flex>
-            <Text mt=".7rem" cursor={"pointer"} onClick={getQuestions}>
-              All Questions
+            <Text
+              borderBottom={
+                tabToShow === "allQuestions"
+                  ? `.3rem solid ${COLORS.orange}`
+                  : ""
+              }
+              mt=".7rem"
+              cursor={"pointer"}
+              onClick={getQuestions}
+            >
+              All Questions({allQuestions?.length})
             </Text>
           </Flex>
           {/* <Flex width="100%" gap=".7rem" wrap="wrap">
@@ -162,7 +190,11 @@ QuestionSectionProps) => {
         </Box>
         <Divider />
         {/* {tabToShow !== "allQuestions" && ( */}
-        <Flex width="100%" justify="space-between">
+        <Flex
+          width="100%"
+          justify="space-between"
+          direction={["column", "column", "row"]}
+        >
           <Flex
             padding="2rem"
             direction="column"
@@ -309,7 +341,7 @@ QuestionSectionProps) => {
                           color={COLORS.orange}
                           cursor="pointer"
                           onClick={() =>
-                            handleSetActiveQuestion(answerOption?.id)
+                            handleSetActiveQuestion(answerOption?.id, index)
                           }
                         >
                           Set as active

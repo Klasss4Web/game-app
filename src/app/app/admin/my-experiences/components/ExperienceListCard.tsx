@@ -30,7 +30,7 @@ const ExperienceListCard = ({ experience, index }: ExperienceListCardProps) => {
   };
 
   const { mutate, isLoading } = useMutation({
-    mutationFn: () => deleteExperience(experience?.id),
+    mutationFn: () => deleteExperience(experience?.id as string),
     mutationKey: ["experiences"],
     onSuccess: (data) => {
       console.log("data", data);

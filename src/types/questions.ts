@@ -15,3 +15,8 @@ export type Questions = OptionFields &
     order: number;
     point: number;
   };
+
+export type ActiveQuestionPayload = {
+  experience_id: string;
+  question_id: string;
+};

@@ -1,11 +1,14 @@
 import io from "socket.io-client";
 import { socketBaseURL } from "./api";
 import {
+  getLocalStorageItem,
   getLocalStorageString,
   setLocalStorageItem,
 } from "@/utils/localStorage";
 import { ACCESS_TOKEN, SAVED_ITEMS } from "@/constants/appConstants";
 import { errorNotifier, successNotifier } from "@/app/providers";
+import { LoggedInParticipant } from "@/types/user";
+import { setTimer } from "@/utils/setTimer";
 
 export const SOCKET_EVENTS = {
   CONNECT: "connect",
@@ -13,6 +16,9 @@ export const SOCKET_EVENTS = {
   joinExperience: "joinExperience",
   joinExperienceError: "joinExperienceError",
   joinExperienceResponse: "joinExperienceResponse",
+  rejoinExperience: "rejoinExperience",
+  rejoinExperienceError: "rejoinExperienceError",
+  rejoinExperienceResponse: "rejoinExperienceResponse",
   adminStartExperience: "startExperience",
   experienceReactivity: "experienceReactivity",
   adminStartExperienceError: "startExperienceError",
@@ -36,7 +42,8 @@ export let socketClient: any = io(socketBaseURL as string);
 export function connect() {
   socketClient = io(socketBaseURL as string);
   socketClient?.on("connect", () => {
-    console.log("CONNECTED TO SOCKET", socketClient);
+    console.log("PART CONNECTED TO SOCKET", socketClient);
+    successNotifier("Connection restored");
     // socketClient.emit();
   });
 }
@@ -88,6 +95,37 @@ export async function joinExperience(
   });
 }
 
+export async function reJoinExperience(
+  payload: any,
+  setData: (arg: any) => void,
+  setPosition: (arg: string) => void,
+  setLoading: (arg: boolean) => void
+) {
+  socketClient = io(socketBaseURL as string);
+  socketClient.emit(
+    SOCKET_EVENTS.rejoinExperience,
+    payload,
+    (response: any) => {
+      console.log(
+        response,
+        `EMIT RESPONSE FOR ${SOCKET_EVENTS.rejoinExperience}`
+      ); // ok
+    }
+  );
+
+  socketClient.on(SOCKET_EVENTS.rejoinExperienceResponse, (data: any) => {
+    setData(data);
+    setPosition("waiting");
+    // setLocalStorageItem(SAVED_ITEMS.participant, data);
+    console.log("REJOIN EXP RESP", data);
+  });
+  socketClient.on(SOCKET_EVENTS.rejoinExperienceError, (error: any) => {
+    console.log("REJOIN EXP ERROR RESP", error);
+    errorNotifier(error?.message);
+    setLoading(false);
+  });
+}
+
 export async function sendMessage(
   name: string,
   payload: any,
@@ -110,6 +148,7 @@ export async function sendMessage(
       `EXP MSG RESP FOR ${SOCKET_EVENTS.adminStartExperienceResponse}`,
       data
     );
+
     setLoading(false);
   });
   socketClient.on(SOCKET_EVENTS.adminStartExperienceError, (error: any) => {
@@ -186,7 +225,8 @@ export async function getExperienceQuestion(
 export async function setActiveQuestion(
   payload: any,
   setLoading: (arg: boolean) => void,
-  setData: (arg: any) => void
+  setData: (arg: any) => void,
+  restart: (arg: Date) => void
 ) {
   setLoading(true);
   socketClient = io(socketBaseURL as string, {
@@ -194,6 +234,7 @@ export async function setActiveQuestion(
       authorization: `Bearer ${token}`,
     },
   });
+  // console.log("socketClient", socketClient);
   socketClient.emit(
     SOCKET_EVENTS.adminSetActiveQuestion,
     payload,
@@ -204,29 +245,45 @@ export async function setActiveQuestion(
       ); // ok
       setData(response);
       setLoading(false);
+
+      successNotifier("Success");
+    }
+  );
+
+  socketClient.on(
+    SOCKET_EVENTS.adminSetActiveQuestionResponse,
+    (response: any) => {
+      console.log(
+        `EXP MSG EXP RESP FOR ${SOCKET_EVENTS.adminSetActiveQuestionResponse}`,
+        response
+      );
+      setLoading(false);
+      restart(setTimer());
       successNotifier("Success");
     }
   );
 
   socketClient.on(SOCKET_EVENTS.adminSetActiveQuestionError, (error: any) => {
     console.log(
-      `EXP MSG EXP RESP FOR ${SOCKET_EVENTS.adminSetActiveQuestionError}`,
+      `ERROR MSG RESP FOR ${SOCKET_EVENTS.adminSetActiveQuestionError}`,
       error
     );
     errorNotifier(error?.message);
     setLoading(false);
-    successNotifier("Success");
   });
 }
 
-export async function answerExperienceQuestion(
+export function answerExperienceQuestion(
   payload: any,
   setLoading: (arg: boolean) => void
 ) {
+  const participant = getLocalStorageItem<LoggedInParticipant>(
+    SAVED_ITEMS.participant
+  );
   setLoading(true);
-  socketClient = io(socketBaseURL as string, {
-    transports: ["websocket"],
-  });
+  // socketClient = io(socketBaseURL as string);
+  console.log("socketClient", socketClient);
+
   socketClient.emit(
     SOCKET_EVENTS.answerExperienceQuestion,
     payload,
@@ -247,7 +304,7 @@ export async function answerExperienceQuestion(
         `MSG RESP FOR ${SOCKET_EVENTS.answerExperienceQuestionResponse}`,
         error
       );
-       successNotifier("Submitted...");
+      successNotifier("Submitted...");
       // errorNotifier(error?.message);
       setLoading(false);
     }

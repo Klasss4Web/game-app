@@ -2,9 +2,10 @@
 
 import { socketBaseURL } from "@/services/api";
 import { connect, disconnect, onDisconnect } from "@/services/socket";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { errorNotifier, successNotifier } from "../providers";
+import { SocketProvider } from "@/contexts/SocketContext";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -12,33 +13,27 @@ type LayoutProps = {
 
 let socketClient: any;
 const Layout = ({ children }: LayoutProps) => {
-  // Connect to the Socket.io server
+  // const [socketConnection, setSocketConnection] = useState({});
+  // useEffect(() => {
+  //   socketClient = io(socketBaseURL as string);
+  //   setSocketConnection(socketClient);
+  //   socketClient.on("connect", () => {
+  //     console.log("CONNECTED IN REAL TIME", socketClient);
+  //     successNotifier("Connection restored");
+  //   });
 
-  useEffect(() => {
-    // connect();
-    // console.log("EFFECT RUNNING FOR SOCKET");
-    // onDisconnect();
-    // return () => {
-    //   disconnect();
-    // };
-    // const socket = io(socketBaseURL as string);
-    socketClient = io(socketBaseURL as string);
-    socketClient.on("connect", () => {
-      console.log("CONNECTED IN REAL TIME");
-      successNotifier("Connection restored");
-    });
+  //   socketClient.on("disconnect", () => {
+  //     console.log("Disconnected from the server!");
+  //     errorNotifier("Connection lost");
+  //   });
 
-    socketClient.on("disconnect", () => {
-      console.log("Disconnected from the server!");
-      errorNotifier("Connection lost");
-    });
+  //   return () => {
+  //     socketClient.disconnect();
+  //   };
+  // }, []);
 
-    return () => {
-      socketClient.disconnect();
-    };
-  }, []);
-  return <div>{children}</div>;
+  // console.log("socketConnection", socketConnection);
+  return <SocketProvider>{children}</SocketProvider>;
 };
 
 export default Layout;
-export { socketClient };
