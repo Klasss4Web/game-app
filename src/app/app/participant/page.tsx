@@ -7,11 +7,7 @@ import FinishedComponent from "./components/FinishedComponent";
 import ParticipantLogin from "./components/ParticipantLogin";
 import WaitingToStart from "./components/WaitingToStart";
 import QuestionBoard from "./components/QuestionBoard";
-import {
-  SOCKET_EVENTS,
-  reJoinExperience,
-  socketClient,
-} from "@/services/socket";
+import { SOCKET_EVENTS } from "@/services/socket";
 import { useSearchParams } from "next/navigation";
 import { SAVED_ITEMS } from "@/constants/appConstants";
 import { getLocalStorageItem } from "@/utils/localStorage";
@@ -24,8 +20,8 @@ import { useSocket } from "@/contexts/SocketContext";
 
 const Participant = () => {
   const params = useSearchParams();
-  const [userName, setUserName] = useState("");
-  const [isFinished, setIsFinished] = useState<boolean>(false);
+  // const [userName, setUserName] = useState("");
+  // const [isFinished, setIsFinished] = useState<boolean>(false);
 
   const [position, setPosition] = useState<string>("login");
 
