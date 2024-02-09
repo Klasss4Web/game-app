@@ -168,6 +168,49 @@ export async function sendMessage(
   });
 }
 
+export async function endExperience(
+  payload: any,
+  setLoading: (arg: boolean) => void,
+  setData: (arg: boolean) => void
+) {
+  setLoading(true);
+
+  socketClient = io(socketBaseURL as string, {
+    extraHeaders: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  socketClient.emit(
+    SOCKET_EVENTS.adminEndExperience,
+    payload,
+    (response: any) => {
+      console.log(
+        response,
+        `EMIT RESPONSE FOR ${SOCKET_EVENTS.adminEndExperience}`
+      ); // ok
+    }
+  );
+
+  socketClient.on(SOCKET_EVENTS.adminEndExperienceResponse, (data: any) => {
+    setData(data);
+    console.log(
+      `EXP MSG RESP FOR ${SOCKET_EVENTS.adminEndExperienceResponse}`,
+      data
+    );
+
+    setLoading(false);
+  });
+  socketClient.on(SOCKET_EVENTS.adminEndExperienceError, (error: any) => {
+    // setData(data);
+    errorNotifier(error?.message);
+    console.log(
+      `EXP ERROR RESP FOR ${SOCKET_EVENTS.adminEndExperienceError}`,
+      error
+    );
+    setLoading(false);
+  });
+}
+
 export const getMessageResponse = (
   name: string,
   setData: (arg: any) => void,

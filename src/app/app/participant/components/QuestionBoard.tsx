@@ -23,12 +23,14 @@ type QuestionsProps = {
   questions: Questions;
   experience_id: string;
   setResponse: (arg: Questions) => void;
+  setPosition: (arg: string) => void;
 };
 
 const QuestionBoard = ({
   questions,
   experience_id,
   setResponse,
+  setPosition,
 }: QuestionsProps) => {
   const { seconds, minutes, isRunning, resume, restart, pause } = useTimer({
     expiryTimestamp: setTimer(),
@@ -53,6 +55,7 @@ const QuestionBoard = ({
         `EXP MSG RESP FOR ${SOCKET_EVENTS.experienceReactivity}`,
         data
       );
+      setPosition(data?.display_type);
       setResponse(data?.result?.question);
       restart(setTimer());
       setLoading(false);

@@ -150,12 +150,13 @@ const Participant = () => {
           />
         )}
         {/* FINISHED GAME */}
-        {isFinished && <FinishedComponent />}
+        {position === "final_score_board" && <FinishedComponent />}
         {(position === "started" || position.includes("question")) && (
           <QuestionBoard
             questions={response as Questions}
             experience_id={experienceId as string}
             setResponse={setResponse}
+            setPosition={setPosition}
           />
         )}
       </Flex>

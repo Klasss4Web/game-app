@@ -68,6 +68,8 @@ const ExperienceDashboard = () => {
     payload: ActiveQuestionPayload,
     questNo: number
   ) => {
+    if (specificExperience?.data?.experience_status === "finish")
+      return errorNotifier("This experience is finished");
     setActiveQuestion(
       payload,
       setActiveLoading,
@@ -179,6 +181,7 @@ const ExperienceDashboard = () => {
         <CountdownControlCard
           isFinished={isFinished}
           experience_id={specificExperience?.data?.id}
+          experience_status={specificExperience?.data?.experience_status}
         />
         <ActiveQuestionsCard
           experience_id={specificExperience?.data?.id}
