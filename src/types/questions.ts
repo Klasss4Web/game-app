@@ -20,3 +20,24 @@ export type ActiveQuestionPayload = {
   experience_id: string;
   question_id: string;
 };
+
+export type SubmitAnswerPayload = {
+  answer_id: string;
+  experience_id: string;
+  question_id: string;
+  question_answered_at: string;
+};
+export type AnswerQuestionResponse = {
+  answer_id: number;
+  answer_text: string;
+  created_at: string;
+  experience_id: string;
+  is_answer_correct: boolean;
+  participant_id: string;
+  point: number;
+  question_activated_at: string;
+  question_answered_at: string;
+  question_id: number;
+  question_point: 100;
+  updated_at: string;
+};

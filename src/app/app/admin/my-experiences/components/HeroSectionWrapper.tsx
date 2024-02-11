@@ -6,6 +6,9 @@ import React from "react";
 
 type SectionWrapperProps = {
   bg?: string;
+  height?: string;
+  overflowY?: "scroll" | "hidden";
+  position?: "relative" | "absolute" | "fixed";
   children?: React.ReactNode;
   align?: "flex-start" | "center" | "space-between";
   textAlign?: "center" | "left";

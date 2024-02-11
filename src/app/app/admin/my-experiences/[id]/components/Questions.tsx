@@ -25,8 +25,8 @@ import {
 
 import useQuestionFunctions from "../hooks/useQuestionFunctions";
 import { createQuestions } from "../service";
-import { getExperienceQuestion, setActiveQuestion } from "@/services/socket";
 import { Participants } from "@/types/experience";
+import { truncateText } from "@/utils/truncateTexts";
 
 type QuestionSectionProps = {
   experience_id: string;
@@ -199,7 +199,9 @@ QuestionSectionProps) => {
             direction="column"
             align="center"
             justify="center"
+            // overflowY="scroll"
             width={["100%", "100%", "79%"]}
+            // height={["65vh"]}
             border={`.1rem solid ${COLORS.formGray}`}
             borderRadius=".4rem"
           >
@@ -444,6 +446,7 @@ QuestionSectionProps) => {
           <Flex
             padding="1rem .8rem"
             direction="column"
+            // overflowY="scroll"
             // align="center"
             // justify="center"
             width={["100%", "100%", "20%"]}
@@ -454,10 +457,13 @@ QuestionSectionProps) => {
             <Divider my=".4rem" />
             {participants?.map((participant: Participants, index: number) => (
               <React.Fragment key={participant?.id}>
-                <Text>
-                  {index + 1}
-                  {"."} {participant?.username}
-                </Text>
+                <Flex width="100%" justify="space-between">
+                  <Text>
+                    {index + 1}
+                    {"."} {truncateText(participant?.username, 20)}
+                  </Text>
+                  <Text>{participant?.total_point}</Text>
+                </Flex>
                 <Divider my=".4rem" />
               </React.Fragment>
             ))}

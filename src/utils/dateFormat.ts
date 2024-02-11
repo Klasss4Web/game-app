@@ -44,3 +44,16 @@ export const formatToIsoDate = () => {
   return formattedDate;
   // console.log(formattedDate);
 };
+
+export const timeDifferenceInSeconds = (startDate: string, endDate: string) => {
+  const questionActivatedAt = new Date(startDate);
+  const questionAnsweredAt = new Date(endDate);
+
+  // Calculate the difference in seconds
+  const differenceInSeconds =
+    (questionAnsweredAt.getTime() - questionActivatedAt.getTime()) / 1000;
+
+  console.log(differenceInSeconds);
+
+  return differenceInSeconds;
+};

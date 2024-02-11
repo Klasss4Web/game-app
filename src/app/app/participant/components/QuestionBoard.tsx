@@ -7,7 +7,12 @@ import { Box, Flex, Progress, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useTimer } from "react-timer-hook";
 import QuestionOptionsCard from "./QuestionOptionsCard";
-import { OptionFields, Questions } from "@/types/questions";
+import {
+  AnswerQuestionResponse,
+  OptionFields,
+  Questions,
+  SubmitAnswerPayload,
+} from "@/types/questions";
 import {
   SOCKET_EVENTS,
   answerExperienceQuestion,
@@ -21,6 +26,7 @@ import { useSocket } from "@/contexts/SocketContext";
 
 type QuestionsProps = {
   questions: Questions;
+  position: string;
   experience_id: string;
   setResponse: (arg: Questions) => void;
   setPosition: (arg: string) => void;
@@ -28,10 +34,12 @@ type QuestionsProps = {
 
 const QuestionBoard = ({
   questions,
+  position,
   experience_id,
   setResponse,
   setPosition,
 }: QuestionsProps) => {
+  const { socketConnection } = useSocket();
   const { seconds, minutes, isRunning, resume, restart, pause } = useTimer({
     expiryTimestamp: setTimer(),
     autoStart: true,
@@ -42,13 +50,22 @@ const QuestionBoard = ({
   const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const [selectedBtnId, setSelectedBtnId] = useState("");
+  const [answerResponse, setAnswerResponse] = useState<AnswerQuestionResponse>(
+    {} as AnswerQuestionResponse
+  );
+  const [flashCount, setFlashCount] = useState(0);
 
-  const { socketConnection } = useSocket();
+  const handleFlash = () => {
+    setFlashCount(3); // Set the number of flashes
+    setTimeout(() => setFlashCount(0), 3000); // Reset flash count after 3 seconds
+  };
+
   console.log("socketConnection SUBMIT", socketConnection);
 
   useEffect(() => {
     setLoading(false);
     socketConnection.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
+      setAnswerResponse({} as AnswerQuestionResponse);
       const audioElement = new Audio("/audio/notification1.wav");
       audioElement.play();
       console.log(
@@ -56,9 +73,14 @@ const QuestionBoard = ({
         data
       );
       setPosition(data?.display_type);
-      setResponse(data?.result?.question);
-      restart(setTimer());
-      setLoading(false);
+      if (data?.display_type === "question") {
+        setResponse(data?.result?.question);
+        restart(setTimer());
+        setLoading(false);
+      } else {
+        setResponse(data?.result);
+        pause();
+      }
     });
     // socketClient.on(SOCKET_EVENTS.experienceReactivity, (error: any) => {
     //   console.log(
@@ -69,12 +91,12 @@ const QuestionBoard = ({
     // });
 
     return () => {
-      socketClient.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
+      socketConnection.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
     };
-  }, [setResponse, restart, questions?.id, selectedBtnId, socketConnection]);
+  }, [setResponse, setPosition, restart, pause, questions?.id, selectedBtnId, socketConnection]);
 
   function answerExperienceQuestions(
-    payload: any,
+    payload: SubmitAnswerPayload,
     setLoading: (arg: boolean) => void
   ) {
     // const participant = getLocalStorageItem<LoggedInParticipant>(
@@ -99,12 +121,14 @@ const QuestionBoard = ({
 
     socketConnection.on(
       SOCKET_EVENTS.answerExperienceQuestionResponse,
-      (error: any) => {
+      (data: any) => {
         console.log(
           `MSG RESP FOR ${SOCKET_EVENTS.answerExperienceQuestionResponse}`,
-          error
+          data
         );
-        successNotifier("Submitted...");
+        setAnswerResponse(data);
+        handleFlash();
+        // successNotifier("Submitted...");
         // errorNotifier(error?.message);
         setLoading(false);
       }
@@ -129,7 +153,6 @@ const QuestionBoard = ({
       answer_id,
       experience_id,
       question_id: questions?.id,
-      // participant_id: participant?.id,
       question_answered_at: formatToIsoDate(),
     };
     setSelectedBtnId(answer_id);
@@ -187,7 +210,7 @@ const QuestionBoard = ({
           size="xs"
           width="75%"
           height=".6rem"
-          value={0}
+          value={(answerResponse?.point / questions?.point) * questions?.point}
           background={COLORS.secondary}
           borderRadius=".4rem"
           isIndeterminate={isRunning}
@@ -199,7 +222,7 @@ const QuestionBoard = ({
           color={COLORS.white}
           padding=".1rem .4rem"
         >
-          {questions?.point} Points
+          {answerResponse?.point} Points
         </Text>
       </Flex>
       {!isAnswered && !isRunning && (
@@ -209,19 +232,26 @@ const QuestionBoard = ({
           textAlign="center"
           mb="1rem"
         >
-          {!selectedBtnId
+          {!selectedBtnId && position === "question"
             ? "Time has run out to answer."
-            : "You have selected an option"}
+            : selectedBtnId && position === "question"
+            ? "You have selected an option"
+            : "See correct answer below"}
         </Text>
       )}
       {questions?.answers?.map((opt: OptionFields, index: number) => (
         <QuestionOptionsCard
           key={index}
+          index={index}
           option={opt?.text}
           isRunning={isRunning}
           isAnswered={isAnswered}
           selectedBtnId={selectedBtnId}
           id={opt?.id}
+          flashCount={flashCount}
+          answerResponse={answerResponse}
+          position={position}
+          isCorrect={opt?.is_correct}
           // setSelectedBtnId={() => setSelectedBtnId(opt?.id)}
           handleSubmitAnswer={() => handleSubmitAnswer(opt?.id)}
         />

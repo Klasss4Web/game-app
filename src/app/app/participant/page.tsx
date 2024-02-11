@@ -17,6 +17,7 @@ import { FullPageLoader } from "@/components/common/FullPageLoader";
 import useIsMounted from "@/hooks/useIsMounted";
 import { Questions } from "@/types/questions";
 import { useSocket } from "@/contexts/SocketContext";
+import { Participants } from "@/types/experience";
 
 const Participant = () => {
   const params = useSearchParams();
@@ -30,7 +31,9 @@ const Participant = () => {
     SAVED_ITEMS.participant
   );
   const [rejoinData, setRejoinData] = useState({});
-  const [response, setResponse] = useState<Questions>({} as Questions);
+  const [response, setResponse] = useState<
+    Questions | Questions[] | Participants[]
+  >({} as Questions);
   const [loading, setLoading] = useState(true);
   const isMounted = useIsMounted();
   const { socketConnection } = useSocket();
@@ -109,7 +112,9 @@ const Participant = () => {
       justify="center"
       align="center"
       width="100%"
-      height="90vh"
+      // height="90vh"
+      // overflowY="scroll"
+      position="relative"
     >
       <Box position="absolute" right="3%" top="2%">
         <Text color={COLORS.white} fontSize="1.6rem">
@@ -146,9 +151,21 @@ const Participant = () => {
           />
         )}
         {/* FINISHED GAME */}
-        {position === "final_score_board" && <FinishedComponent />}
-        {(position === "started" || position.includes("question")) && (
+        {(position === "final_score_board" ||
+          position === "show_question_rank" ||
+          position === "show_final_rank") && (
+          <FinishedComponent
+            position={position}
+            participants={response as Participants[]}
+            setResponse={setResponse}
+            setPosition={setPosition}
+          />
+        )}
+        {(position === "started" ||
+          position === "show_correct_answer" ||
+          position === "question") && (
           <QuestionBoard
+            position={position}
             questions={response as Questions}
             experience_id={experienceId as string}
             setResponse={setResponse}

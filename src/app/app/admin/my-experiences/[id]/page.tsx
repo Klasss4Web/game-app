@@ -27,7 +27,9 @@ import { socketBaseURL } from "@/services/api";
 import {
   SOCKET_EVENTS,
   getExperienceQuestion,
-  getParticipantsCurrentScore,
+  getParticipantsFinalScore,
+  handleAdminControls,
+  // handleShowCorrectAnswer,
   setActiveQuestion,
 } from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
@@ -38,10 +40,13 @@ import { ActiveQuestionPayload, Questions } from "@/types/questions";
 import { Participants } from "@/types/experience";
 import { useTimer } from "react-timer-hook";
 import { setTimer } from "@/utils/setTimer";
+import { getUniqueArray } from "@/utils/uniqueArray";
+import { useSocket } from "@/contexts/SocketContext";
 // import notification from "/audio/notification.wav";
 
 const ExperienceDashboard = () => {
   const params = useParams();
+  const { socketConnection } = useSocket();
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeLoading, setActiveLoading] = useState(false);
@@ -79,6 +84,22 @@ const ExperienceDashboard = () => {
     setSliceIndex(questNo);
   };
 
+  const handleViewersControl = (
+    eventName: string,
+    reponseName: string,
+    errorName: string
+  ) => {
+    const payload = { experience_id: specificExperience?.data?.id };
+    handleAdminControls(
+      eventName,
+      reponseName,
+      errorName,
+      payload,
+      socketConnection,
+      setParticipants
+    );
+  };
+
   useEffect(() => {
     // const audioElement = new Audio("/audio/notification.wav");
     const audioElement = new Audio("/audio/backgroundSound.mp3");
@@ -89,62 +110,55 @@ const ExperienceDashboard = () => {
     const payload = {
       experience_id: params?.id,
     };
+
     getExperienceQuestion(payload, setLoading, setAllQuestions);
     const socketClient = io(socketBaseURL as string, {
       extraHeaders: {
         authorization: `Bearer ${token}`,
       },
     });
+    // getParticipantsFinalScore(payload, socketClient);
     // if (allQuestions.length > 0) {
     socketClient.emit(
-      SOCKET_EVENTS.adminGetExperienceParticipants,
+      SOCKET_EVENTS.getParticipantsScore,
       { experience_id: params?.id },
       (response: any) => {
         console.log(
           response,
-          `EMIT RESPONSE FOR ${SOCKET_EVENTS.adminGetExperienceParticipants}`
+          `EMIT RESPONSE FOR ${SOCKET_EVENTS.getParticipantsScore}`
         ); // ok
       }
     );
     // }
-    socketClient.on(
-      SOCKET_EVENTS.getExperienceParticipantResponse,
-      (data: any) => {
-        setParticipants(data);
-        console.log(
-          `PARTICIPANTS MSG RESP FOR ${SOCKET_EVENTS.getExperienceParticipantResponse}`,
-          data
-        );
-        setLoading(false);
-      }
-    );
-    socketClient.on(
-      SOCKET_EVENTS.getExperienceParticipantError,
-      (error: any) => {
-        // setData(data);
-        errorNotifier(error?.message);
-        console.log(
-          `PARTICIPANTS ERROR RESP FOR ${SOCKET_EVENTS.getExperienceParticipantError}`,
-          error
-        );
-        setLoading(false);
-      }
-    );
+    socketClient.on(SOCKET_EVENTS.getParticipantsScoreResponse, (data: any) => {
+      const removeDuplicateData = getUniqueArray(data);
+      setParticipants(removeDuplicateData);
+      console.log(
+        `PARTICIPANTS MSG RESP FOR ${SOCKET_EVENTS.getParticipantsScoreResponse}`,
+        removeDuplicateData
+      );
+      setLoading(false);
+    });
+    socketClient.on(SOCKET_EVENTS.getParticipantsScoreError, (error: any) => {
+      // setData(data);
+      errorNotifier(error?.message);
+      console.log(
+        `PARTICIPANTS ERROR RESP FOR ${SOCKET_EVENTS.getParticipantsScoreError}`,
+        error
+      );
+      setLoading(false);
+    });
 
     // getParticipantsCurrentScore(payload, socketClient);
     // socketClient.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
     //   console.log("ADMIN JOIN EXP RESP", data);
     // });
     return () => {
+      socketClient.removeAllListeners(SOCKET_EVENTS.getParticipantsScore);
       socketClient.removeAllListeners(
-        SOCKET_EVENTS.adminGetExperienceParticipants
+        SOCKET_EVENTS.getParticipantsScoreResponse
       );
-      socketClient.removeAllListeners(
-        SOCKET_EVENTS.getExperienceParticipantResponse
-      );
-      socketClient.removeAllListeners(
-        SOCKET_EVENTS.getExperienceParticipantError
-      );
+      socketClient.removeAllListeners(SOCKET_EVENTS.getParticipantsScoreError);
     };
   }, [params?.id, allQuestions.length, participants.length]);
 
@@ -244,7 +258,24 @@ const ExperienceDashboard = () => {
               alignItems="center"
               width="25%"
             >
-              <Switch id="correct-answers" size="lg" />
+              <Switch
+                id="correct-answers"
+                size="lg"
+                onChange={
+                  () =>
+                    handleViewersControl(
+                      SOCKET_EVENTS.adminShowCorrectAnswer,
+                      SOCKET_EVENTS.showCorrectAnswerResponse,
+                      SOCKET_EVENTS.showCorrectAnswerError
+                    )
+                  // handleShowCorrectAnswer(
+                  //   {
+                  //     experience_id: specificExperience?.data?.id,
+                  //   },
+                  //   socketConnection
+                  // )
+                }
+              />
               <FormLabel
                 htmlFor="correct-answers"
                 mb="0"
@@ -252,6 +283,58 @@ const ExperienceDashboard = () => {
                 textAlign="center"
               >
                 Show Correct Answers
+              </FormLabel>
+            </FormControl>
+            <FormControl
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="25%"
+            >
+              <Switch
+                id="question-ranking"
+                size="lg"
+                onChange={() =>
+                  handleViewersControl(
+                    SOCKET_EVENTS.adminShowQuestionRank,
+                    SOCKET_EVENTS.showQuestionRankResponse,
+                    SOCKET_EVENTS.showQuestionRankError
+                  )
+                }
+              />
+              <FormLabel
+                htmlFor="question-ranking"
+                mb="0"
+                fontSize=".7rem"
+                textAlign="center"
+              >
+                Show Question Ranking
+              </FormLabel>
+            </FormControl>
+            <FormControl
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="25%"
+            >
+              <Switch
+                id="leader-board"
+                size="lg"
+                onChange={() =>
+                  handleViewersControl(
+                    SOCKET_EVENTS.adminShowFinalRank,
+                    SOCKET_EVENTS.showFinalRankResponse,
+                    SOCKET_EVENTS.showFinalRankError
+                  )
+                }
+              />
+              <FormLabel
+                htmlFor="leader-board"
+                mb="0"
+                fontSize=".7rem"
+                textAlign="center"
+              >
+                Show Leader Board
               </FormLabel>
             </FormControl>
             <FormControl

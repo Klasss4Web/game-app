@@ -6,9 +6,13 @@ export type CreateExpPayload = {
 export type Participants = {
   experience_id: string;
   id: string;
+  index: number;
   is_active: boolean;
   nonce_id: string;
   username: string;
+  point: number;
+  total_point: number;
+  is_question_answered: boolean;
 };
 
 export type ExperienceData = {

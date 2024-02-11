@@ -201,3 +201,30 @@
   z-index: 1;
   object-fit: cover;
 }
+
+
+.flashing-button {
+  background-color: #007bff; /* Default button background color */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.flashing {
+  animation: flashAnimation 1s infinite; /* Flashing animation */
+}
+
+@keyframes flashAnimation {
+  0%, 50% {
+    background-color: #007bff; /* Initial and middle color */
+  }
+  25%, 75% {
+    background-color: #ff0000; /* Flashing color */
+  }
+  100% {
+    background-color: #007bff; /* Final color */
+  }
+}

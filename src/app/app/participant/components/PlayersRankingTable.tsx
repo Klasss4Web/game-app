@@ -3,41 +3,57 @@ import {
   TableCaption,
   TableContainer,
   Tbody,
-  Td,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
 import React from "react";
+import TableBody from "./TableBody";
+import { Participants } from "@/types/experience";
 
-const PlayersRankingTable = () => {
+type PlayersRankingTableProps = {
+  data: Participants[];
+  position: string;
+};
+
+const PlayersRankingTable = ({ data, position }: PlayersRankingTableProps) => {
+  // const loggedInParticipant = getLocalStorageItem<LoggedInParticipant>(
+  //   SAVED_ITEMS.participant
+  // );
+  // const sortedDataInDescOrder = data
+  //   ?.sort((a, b) => b.point - a.point)
+  //   ?.map((sortedData, index) => ({ index, ...sortedData }));
+  // const getCurrentParticipantScore = sortedDataInDescOrder.find(
+  //   (participant) => participant?.id === loggedInParticipant?.id
+  // );
+  // console.log("getCurrentParticipantScore", getCurrentParticipantScore);
   return (
-    <TableContainer>
+    <TableContainer h="40vh" overflowY="scroll">
       <Table variant="striped" colorScheme="teal">
         <TableCaption>Players scores and rankings</TableCaption>
         <Thead>
           <Tr>
             <Th>Rank</Th>
             <Th>Player</Th>
+            {position === "show_question_rank" && <Th>Status</Th>}
             <Th isNumeric>Points</Th>
           </Tr>
         </Thead>
         <Tbody>
-          <Tr>
-            <Td>1</Td>
-            <Td>John (mm)</Td>
-            <Td isNumeric>100</Td>
-          </Tr>
-          <Tr>
-            <Td>2</Td>
-            <Td>Doe</Td>
-            <Td isNumeric>98</Td>
-          </Tr>
-          <Tr>
-            <Td>3</Td>
-            <Td>Jane (m)</Td>
-            <Td isNumeric>85</Td>
-          </Tr>
+          {data?.map((participant, index) => (
+            <TableBody
+              key={participant?.id}
+              position={position}
+              score={
+                position === "show_final_rank"
+                  ? participant?.total_point
+                  : participant?.point
+              }
+              serialNo={participant?.index + 1}
+              userName={participant.username}
+              isQuestionAnswered={participant?.is_question_answered}
+            />
+          ))}
         </Tbody>
       </Table>
     </TableContainer>

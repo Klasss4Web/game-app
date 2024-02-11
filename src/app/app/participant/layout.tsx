@@ -63,18 +63,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return !isMounted ? (
     <FullPageLoader />
   ) : (
-    <Box width="100%" minH="100vh" position={"relative"} bg={COLORS.bgGrey}>
-      {participant && <DashboardNavBar />}
-      <Box
-        // mt=".7rem"
-        height="100vh"
-        overflowY="scroll"
-        className="gradient-background"
-        px={[".8rem", ".8rem", "1rem", "1rem", "1rem"]}
-        py={["1rem"]}
-      >
-        {children}
-      </Box>
+    <Box
+      className="gradient-background"
+      width="100%"
+      minH="100vh"
+      position={"relative"}
+      // bg={COLORS.bgGrey}
+      // overflowY="scroll"
+      px={[".8rem", ".8rem", "1rem", "1rem", "1rem"]}
+      py={["1rem"]}
+    >
+      {children}
     </Box>
   );
 }

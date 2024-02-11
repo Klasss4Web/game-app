@@ -9,6 +9,7 @@ import { ACCESS_TOKEN, SAVED_ITEMS } from "@/constants/appConstants";
 import { errorNotifier, successNotifier } from "@/app/providers";
 import { LoggedInParticipant } from "@/types/user";
 import { setTimer } from "@/utils/setTimer";
+import { Participants } from "@/types/experience";
 
 export const SOCKET_EVENTS = {
   CONNECT: "connect",
@@ -32,9 +33,23 @@ export const SOCKET_EVENTS = {
   getParticipantsScore: "getParticipantsScore",
   getParticipantsScoreError: "getParticipantsScoreError",
   getParticipantsScoreResponse: "getParticipantsScoreResponse",
+  getCurrentQuestionParticipantScore: "getCurrentQuestionParticipantScore",
+  getCurrentQuestionParticipantsScoreError:
+    "getCurrentQuestionParticipantsScoreError",
+  getCurrentQuestionParticipantsScoreResponse:
+    "getCurrentQuestionParticipantsScoreResponse",
   adminSetActiveQuestionResponse: "setActiveQuestionResponse",
   adminSetActiveQuestionError: "setActiveQuestionError",
   adminGetExperienceParticipants: "getExperienceParticipant",
+  adminShowCorrectAnswer: "showCorrectAnswer",
+  showCorrectAnswerResponse: "showCorrectAnswerResponse",
+  showCorrectAnswerError: "showCorrectAnswerError",
+  adminShowQuestionRank: "showQuestionRank",
+  showQuestionRankError: "showQuestionRankError",
+  showQuestionRankResponse: "showQuestionRankResponse",
+  adminShowFinalRank: "showFinalRank",
+  showFinalRankResponse: "showFinalRankResponse",
+  showFinalRankError: "showFinalRankError",
   getExperienceParticipantError: "getExperienceParticipantError",
   getExperienceParticipantResponse: "getExperienceParticipantResponse",
   answerExperienceQuestion: "answerExperienceQuestion",
@@ -367,13 +382,11 @@ export function answerExperienceQuestion(
   });
 }
 
-export function getParticipantsCurrentScore(
+export function getParticipantsFinalScore(
   payload: any,
   socketClient: any
   // setLoading: (arg: boolean) => void
 ) {
-  // setLoading(true);
-  // socketClient = io(socketBaseURL as string);
   console.log("socketClient", socketClient);
 
   socketClient.emit(
@@ -397,12 +410,66 @@ export function getParticipantsCurrentScore(
     successNotifier("Leader Board Updated");
     // setLoading(false);
   });
-  socketClient.on(SOCKET_EVENTS.getExperienceParticipantError, (error: any) => {
+  socketClient.on(SOCKET_EVENTS.getParticipantsScoreError, (error: any) => {
     console.log(
-      `MSG ERROR FOR ${SOCKET_EVENTS.getExperienceParticipantError}`,
+      `MSG ERROR FOR ${SOCKET_EVENTS.getParticipantsScoreError}`,
       error
     );
     errorNotifier(error?.message);
     // setLoading(false);
   });
+}
+
+export const socketEmitEvent = (
+  eventName: string,
+  eventPayload: any,
+  socketClient: any
+) => {
+  socketClient.emit(eventName, eventPayload, (response: any) => {
+    console.log(response, `EMIT RESPONSE FOR ${eventName}`); // ok
+  });
+};
+
+export const socketListenEvent = (
+  eventName: string,
+  socketClient: any,
+  setData: (arg: Participants[]) => void = (arg) => null
+) => {
+  socketClient.on(eventName, (data: any) => {
+    console.log(`MSG RESP FOR ${eventName}`, data);
+    setData(data);
+    successNotifier("Success...");
+  });
+};
+
+export const socketListenError = (eventName: string, socketClient: any) => {
+  socketClient.on(eventName, (error: any) => {
+    console.log(`MSG ERROR FOR ${eventName}`, error);
+    errorNotifier(error?.message);
+    // setLoading(false);
+  });
+};
+// export function handleShowCorrectAnswer(payload: any, socketClient: any) {
+//   console.log("socketClient", socketClient);
+
+//   socketEmitEvent(SOCKET_EVENTS.adminShowCorrectAnswer, payload, socketClient);
+
+//   socketListenEvent(SOCKET_EVENTS.showCorrectAnswerResponse, socketClient);
+//   socketListenError(SOCKET_EVENTS.showCorrectAnswerError, socketClient);
+// }
+
+export function handleAdminControls(
+  eventName: string,
+  responseName: string,
+  errorName: string,
+  payload: { experience_id: string },
+  socketClient: any,
+  setData: (arg: Participants[]) => void
+) {
+  console.log("socketClient", socketClient);
+
+  socketEmitEvent(eventName, payload, socketClient);
+
+  socketListenEvent(responseName, socketClient, setData);
+  socketListenError(errorName, socketClient);
 }

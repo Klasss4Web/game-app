@@ -9,7 +9,7 @@ import { Box, Divider, Flex, Text } from "@chakra-ui/react";
 import SetQuestionHeaderSection from "./SetQuestionHeaderSection";
 import useHandleChange from "@/hooks/useHandleChange";
 import { errorNotifier } from "@/app/providers";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { createExperience } from "../service";
 import { CreateExpPayload } from "@/types/experience";
 import { ROUTES } from "@/constants/pageRoutes";
@@ -23,6 +23,7 @@ const CreateExperienceModalContent = ({
   onClose,
 }: CreateExperienceModalContentProps) => {
   const router = useRouter();
+  const queryClient = new QueryClient();
   const [formValues, setFormValues] = useState<CreateExpPayload>({
     title: "",
     description: "",
@@ -41,8 +42,10 @@ const CreateExperienceModalContent = ({
 
   const { mutate, isLoading } = useMutation({
     mutationFn: createExperience,
+    mutationKey: ["specificExperience"],
     onSuccess: (data) => {
       console.log("data", data);
+      queryClient.invalidateQueries({ queryKey: ["getRequest"] });
       router.push(ROUTES.my_experience);
       onClose && onClose();
     },
