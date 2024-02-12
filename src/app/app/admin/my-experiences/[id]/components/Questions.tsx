@@ -56,7 +56,7 @@ QuestionSectionProps) => {
 
   const [activeQuestionResponse, setActiveQuestionResponse] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
-  const [tabToShow, setTabToShow] = useState("addQuestions");
+  const [tabToShow, setTabToShow] = useState("allQuestions");
   const {
     // sliceIndex,
     // setSliceIndex,
@@ -83,9 +83,11 @@ QuestionSectionProps) => {
 
   const { mutate, isLoading } = useMutation({
     mutationFn: createQuestions,
+    mutationKey: ["all-questions"],
     onSuccess: (data) => {
       console.log("data", data);
       //  onClose && onClose();
+      setTabToShow("allQuestions");
       setFormValues({
         answerFields: [] as AnswerFields[],
       });
@@ -198,10 +200,10 @@ QuestionSectionProps) => {
             padding="2rem"
             direction="column"
             align="center"
-            justify="center"
-            // overflowY="scroll"
+            // justify="center"
+            overflowY="scroll"
             width={["100%", "100%", "79%"]}
-            // height={["65vh"]}
+            height={["65vh"]}
             border={`.1rem solid ${COLORS.formGray}`}
             borderRadius=".4rem"
           >
@@ -314,16 +316,17 @@ QuestionSectionProps) => {
                   ))
                   .at(sliceIndex)}
                 <Divider mb="1rem" />
-                {formValues?.answerFields?.length > 0 && (
-                  <CustomBtn
-                    w={["100%", "100%", "14rem"]}
-                    h={["2.4rem"]}
-                    text="Submit"
-                    loading={isLoading}
-                    disabled={!formValues?.answerFields?.[0]?.text}
-                    handleSubmit={handleCreate}
-                  />
-                )}
+                {formValues?.answerFields?.length > 0 &&
+                  tabToShow === "addQuestions" && (
+                    <CustomBtn
+                      w={["100%", "100%", "14rem"]}
+                      h={["2.4rem"]}
+                      text="Submit"
+                      loading={isLoading}
+                      disabled={!formValues?.answerFields?.[0]?.text}
+                      handleSubmit={handleCreate}
+                    />
+                  )}
               </>
             )}
             {tabToShow === "allQuestions" && (
@@ -446,14 +449,15 @@ QuestionSectionProps) => {
           <Flex
             padding="1rem .8rem"
             direction="column"
-            // overflowY="scroll"
+            overflowY="scroll"
             // align="center"
             // justify="center"
             width={["100%", "100%", "20%"]}
+            height={["65vh"]}
             border={`.1rem solid ${COLORS.formGray}`}
             borderRadius=".4rem"
           >
-            <Text>PARTICIPANTS</Text>
+            <Text>PARTICIPANTS({participants?.length})</Text>
             <Divider my=".4rem" />
             {participants?.map((participant: Participants, index: number) => (
               <React.Fragment key={participant?.id}>

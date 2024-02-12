@@ -42,6 +42,7 @@ import { useTimer } from "react-timer-hook";
 import { setTimer } from "@/utils/setTimer";
 import { getUniqueArray } from "@/utils/uniqueArray";
 import { useSocket } from "@/contexts/SocketContext";
+import Participant from "@/app/app/participant/page";
 // import notification from "/audio/notification.wav";
 
 const ExperienceDashboard = () => {
@@ -54,7 +55,7 @@ const ExperienceDashboard = () => {
   const [activeQuestionResponse, setActiveQuestionResponse] =
     useState<Questions>({} as Questions);
   const [sliceIndex, setSliceIndex] = useState(0);
-  const [allQuestions, setAllQuestions] = useState<Questions[]>([]);
+  // const [allQuestions, setAllQuestions] = useState<Questions[]>([]);
 
   const { seconds, minutes, isRunning, resume, restart, pause } = useTimer({
     expiryTimestamp: setTimer(),
@@ -69,6 +70,15 @@ const ExperienceDashboard = () => {
     enabled: !!params?.id,
   });
 
+  const { data: allQuestions, isLoading: isLoadingQuestions } = useQuery<{
+    data: Questions[];
+  }>({
+    queryKey: ["all-questions"],
+    queryFn: () => getAllQuestions(params?.id as string),
+    retry: 3,
+    enabled: !!params?.id,
+  });
+  console.log("allQuest----", allQuestions);
   const handleSetActiveQuestion = (
     payload: ActiveQuestionPayload,
     questNo: number
@@ -87,7 +97,8 @@ const ExperienceDashboard = () => {
   const handleViewersControl = (
     eventName: string,
     reponseName: string,
-    errorName: string
+    errorName: string,
+    setData: (arg: Participants[]) => void = (arg) => null
   ) => {
     const payload = { experience_id: specificExperience?.data?.id };
     handleAdminControls(
@@ -96,7 +107,7 @@ const ExperienceDashboard = () => {
       errorName,
       payload,
       socketConnection,
-      setParticipants
+      setData
     );
   };
 
@@ -111,7 +122,7 @@ const ExperienceDashboard = () => {
       experience_id: params?.id,
     };
 
-    getExperienceQuestion(payload, setLoading, setAllQuestions);
+    // getExperienceQuestion(payload, setLoading, setAllQuestions);
     const socketClient = io(socketBaseURL as string, {
       extraHeaders: {
         authorization: `Bearer ${token}`,
@@ -120,49 +131,72 @@ const ExperienceDashboard = () => {
     // getParticipantsFinalScore(payload, socketClient);
     // if (allQuestions.length > 0) {
     socketClient.emit(
-      SOCKET_EVENTS.getParticipantsScore,
+      SOCKET_EVENTS.adminGetExperienceParticipants,
       { experience_id: params?.id },
       (response: any) => {
         console.log(
           response,
-          `EMIT RESPONSE FOR ${SOCKET_EVENTS.getParticipantsScore}`
+          `EMIT RESPONSE FOR ${SOCKET_EVENTS.adminGetExperienceParticipants}`
         ); // ok
       }
     );
     // }
-    socketClient.on(SOCKET_EVENTS.getParticipantsScoreResponse, (data: any) => {
-      const removeDuplicateData = getUniqueArray(data);
-      setParticipants(removeDuplicateData);
-      console.log(
-        `PARTICIPANTS MSG RESP FOR ${SOCKET_EVENTS.getParticipantsScoreResponse}`,
-        removeDuplicateData
-      );
-      setLoading(false);
-    });
-    socketClient.on(SOCKET_EVENTS.getParticipantsScoreError, (error: any) => {
-      // setData(data);
-      errorNotifier(error?.message);
-      console.log(
-        `PARTICIPANTS ERROR RESP FOR ${SOCKET_EVENTS.getParticipantsScoreError}`,
-        error
-      );
-      setLoading(false);
-    });
+    socketClient.on(
+      SOCKET_EVENTS.getExperienceParticipantResponse,
+      (data: any) => {
+        const audioElement = new Audio("/audio/notification1.wav");
+        // audioElement.loop = true;
+        audioElement.play();
+        const removeDuplicateData = getUniqueArray(data);
+        setParticipants(removeDuplicateData);
+        console.log(
+          `PARTICIPANTS MSG RESP FOR ${SOCKET_EVENTS.getExperienceParticipantResponse}`,
+          removeDuplicateData
+        );
+        setLoading(false);
+      }
+    );
+    socketClient.on(
+      SOCKET_EVENTS.getExperienceParticipantError,
+      (error: any) => {
+        // setData(data);
+        errorNotifier(error?.message);
+        console.log(
+          `PARTICIPANTS ERROR RESP FOR ${SOCKET_EVENTS.getExperienceParticipantError}`,
+          error
+        );
+        setLoading(false);
+      }
+    );
 
     // getParticipantsCurrentScore(payload, socketClient);
     // socketClient.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
     //   console.log("ADMIN JOIN EXP RESP", data);
     // });
     return () => {
-      socketClient.removeAllListeners(SOCKET_EVENTS.getParticipantsScore);
       socketClient.removeAllListeners(
-        SOCKET_EVENTS.getParticipantsScoreResponse
+        SOCKET_EVENTS.adminGetExperienceParticipants
       );
-      socketClient.removeAllListeners(SOCKET_EVENTS.getParticipantsScoreError);
+      socketClient.removeAllListeners(
+        SOCKET_EVENTS.getExperienceParticipantResponse
+      );
+      socketClient.removeAllListeners(
+        SOCKET_EVENTS.getExperienceParticipantError
+      );
     };
-  }, [params?.id, allQuestions.length, participants.length]);
+  }, [params?.id, participants.length]);
 
-  console.log("PARTICIPANTS", participants, specificExperience);
+  const participantsWhoAnsweredQuest = participants?.filter(
+    (participant) => participant?.is_question_answered
+  );
+
+  console.log(
+    "PARTICIPANTS",
+    participants,
+    specificExperience,
+    "participantsWhoAnsweredQuest",
+    participantsWhoAnsweredQuest
+  );
 
   // const { data: questions, isLoadingQuestions } = useQuery({
   //   queryKey: ["questions"],
@@ -201,7 +235,7 @@ const ExperienceDashboard = () => {
           experience_id={specificExperience?.data?.id}
           setSliceIndex={setSliceIndex}
           sliceIndex={sliceIndex}
-          allQuestions={allQuestions}
+          allQuestions={allQuestions?.data as Questions[]}
           setActiveQuestion={handleSetActiveQuestion}
         />
         <GameExperienceCard
@@ -298,7 +332,8 @@ const ExperienceDashboard = () => {
                   handleViewersControl(
                     SOCKET_EVENTS.adminShowQuestionRank,
                     SOCKET_EVENTS.showQuestionRankResponse,
-                    SOCKET_EVENTS.showQuestionRankError
+                    SOCKET_EVENTS.showQuestionRankError,
+                    setParticipants
                   )
                 }
               />
@@ -324,7 +359,8 @@ const ExperienceDashboard = () => {
                   handleViewersControl(
                     SOCKET_EVENTS.adminShowFinalRank,
                     SOCKET_EVENTS.showFinalRankResponse,
-                    SOCKET_EVENTS.showFinalRankError
+                    SOCKET_EVENTS.showFinalRankError,
+                    setParticipants
                   )
                 }
               />
@@ -355,15 +391,18 @@ const ExperienceDashboard = () => {
             </FormControl>
           </Flex>
         </GameControlExperienceCard>
-        <StatsCard experience={specificExperience?.data} />
+        <StatsCard
+          experience={specificExperience?.data}
+          participantsWhoAnsweredQuest={participantsWhoAnsweredQuest?.length}
+        />
       </Flex>
       <QuestionSection
         experience_id={specificExperience?.data?.id}
         // setAllQuestions={setAllQuestions}
-        allQuestions={allQuestions}
+        allQuestions={(allQuestions?.data as Questions[]) || []}
         setSliceIndex={setSliceIndex}
         sliceIndex={sliceIndex}
-        participants={participants}
+        participants={getUniqueArray(participants)}
         setActiveQuestion={handleSetActiveQuestion}
       />
     </Box>

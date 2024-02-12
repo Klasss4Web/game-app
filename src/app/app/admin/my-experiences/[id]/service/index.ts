@@ -32,9 +32,11 @@ export const createQuestions = async (payload: any) => {
   }
 };
 
-export const getAllQuestions = async () => {
+export const getAllQuestions = async (experienceId: string) => {
   try {
-    const { data } = await axiosInstance.get(API_ROUTES.QUESTIONS);
+    const { data } = await axiosInstance.get(
+      API_ROUTES.GET_ALL_QUESTIONS(experienceId)
+    );
     return data;
   } catch (error: any) {
     if (error.response) {

@@ -24,7 +24,7 @@ const ActiveQuestionsCard = ({
   experience_id,
   setSliceIndex,
   sliceIndex,
-  allQuestions,
+  allQuestions = [],
 }: // totalQuestions,
 ActiveQuestionsCardProps) => {
   const [response, setResponse] = useState({});

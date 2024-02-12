@@ -8,6 +8,8 @@ export const API_ROUTES = {
 
   //   QUESTIONS
   QUESTIONS: "/questions",
+  GET_ALL_QUESTIONS: (experienceId: string) =>
+    `/experience/${experienceId}/questions`,
   GET_QUESTION_BY_ID: (experienceId: string) => `/questions/${experienceId}`,
 
   //   EXPERIENCES

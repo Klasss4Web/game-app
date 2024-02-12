@@ -91,6 +91,36 @@ export function disconnect() {
 //   socketClient.removeAllListeners(MESSAGE_EVENT_NAME);
 // }
 
+export const socketEmitEvent = (
+  eventName: string,
+  eventPayload: any,
+  socketClient: any
+) => {
+  socketClient.emit(eventName, eventPayload, (response: any) => {
+    console.log(response, `EMIT RESPONSE FOR ${eventName}`); // ok
+  });
+};
+
+export const socketListenEvent = (
+  eventName: string,
+  socketClient: any,
+  setData: (arg: Participants[]) => void = (arg) => null
+) => {
+  socketClient.on(eventName, (data: any) => {
+    console.log(`MSG RESP FOR ${eventName}`, data);
+    setData(data);
+    successNotifier("Success...");
+  });
+};
+
+export const socketListenError = (eventName: string, socketClient: any) => {
+  socketClient.on(eventName, (error: any) => {
+    console.log(`MSG ERROR FOR ${eventName}`, error);
+    errorNotifier(error?.message);
+    // setLoading(false);
+  });
+};
+
 export async function joinExperience(
   name: string,
   payload: any,
@@ -107,6 +137,13 @@ export async function joinExperience(
     setData(data);
     setPosition("waiting");
     setLocalStorageItem(SAVED_ITEMS.participant, data);
+    socketEmitEvent(
+      SOCKET_EVENTS.adminGetExperienceParticipants,
+      {
+        experience_id: payload?.experience_id,
+      },
+      socketClient
+    );
     console.log("EXP RESP", data);
   });
   socketClient.on("joinExperienceError", (error: any) => {
@@ -420,35 +457,6 @@ export function getParticipantsFinalScore(
   });
 }
 
-export const socketEmitEvent = (
-  eventName: string,
-  eventPayload: any,
-  socketClient: any
-) => {
-  socketClient.emit(eventName, eventPayload, (response: any) => {
-    console.log(response, `EMIT RESPONSE FOR ${eventName}`); // ok
-  });
-};
-
-export const socketListenEvent = (
-  eventName: string,
-  socketClient: any,
-  setData: (arg: Participants[]) => void = (arg) => null
-) => {
-  socketClient.on(eventName, (data: any) => {
-    console.log(`MSG RESP FOR ${eventName}`, data);
-    setData(data);
-    successNotifier("Success...");
-  });
-};
-
-export const socketListenError = (eventName: string, socketClient: any) => {
-  socketClient.on(eventName, (error: any) => {
-    console.log(`MSG ERROR FOR ${eventName}`, error);
-    errorNotifier(error?.message);
-    // setLoading(false);
-  });
-};
 // export function handleShowCorrectAnswer(payload: any, socketClient: any) {
 //   console.log("socketClient", socketClient);
 

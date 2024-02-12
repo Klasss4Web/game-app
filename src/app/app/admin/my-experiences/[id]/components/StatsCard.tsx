@@ -8,10 +8,13 @@ import { ExperienceData } from "@/types/experience";
 
 type StatsCardProps = {
   experience: ExperienceData;
+  participantsWhoAnsweredQuest: number;
 };
 
-const StatsCard = ({ experience }: StatsCardProps) => {
-
+const StatsCard = ({
+  experience,
+  participantsWhoAnsweredQuest,
+}: StatsCardProps) => {
   return (
     <GameControlExperienceCard>
       <Text fontSize="1.4rem">Quick Stats</Text>
@@ -28,6 +31,9 @@ const StatsCard = ({ experience }: StatsCardProps) => {
               break;
             case "no_of_questions":
               statNumber = experience?.no_of_questions;
+              break;
+            case "no_of_answers":
+              statNumber = participantsWhoAnsweredQuest;
             // Add more cases for other stats keys as needed
             default:
               break;

@@ -24,13 +24,13 @@ export const stats: Stats[] = [
     icon: FaCheck,
     statNumber: "1",
     statLabel: "ANSWERS",
-    key: "",
+    key: "no_of_answers",
   },
   {
     id: "4",
     icon: FaRegCheckCircle,
     statNumber: "1",
     statLabel: "Q1 ANSWERS",
-    key: "",
+    key: "no_of_correct_answers",
   },
 ];

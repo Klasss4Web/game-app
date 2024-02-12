@@ -80,10 +80,10 @@ const FinishedComponent = ({
         height="8rem"
         bg={COLORS.secondary}
         position="absolute"
-        top="-10%"
+        top="-12%"
         // zIndex={10}
       >
-        <Text color={COLORS.white}>
+        <Text color={COLORS.white} mt="2rem">
           {position === "show_final_rank"
             ? getCurrentParticipantScore?.total_point
             : getCurrentParticipantScore?.point}
@@ -114,7 +114,7 @@ const FinishedComponent = ({
           ) : (
             <>
               <Text>{sortedDataInDescOrder?.[0]?.username}</Text>
-              <Text>Winner</Text>
+              <Text>Top Genius</Text>
             </>
           )}
         </Box>

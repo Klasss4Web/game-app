@@ -64,6 +64,16 @@ const Participant = () => {
             setData(data);
             setPosition("waiting");
             console.log("REJOIN EXP RESP", data);
+            socketConnection.emit(
+              SOCKET_EVENTS.adminGetExperienceParticipants,
+              { experience_id: participant?.experience_id },
+              (response: any) => {
+                console.log(
+                  response,
+                  `EMIT RESPONSE FOR ${SOCKET_EVENTS.adminGetExperienceParticipants}`
+                ); // ok
+              }
+            );
           }
         );
 
@@ -79,7 +89,7 @@ const Participant = () => {
         console.warn("Socket connection not ready yet.");
       }
     },
-    [socketConnection]
+    [socketConnection, participant?.experience_id]
   );
 
   useEffect(() => {
@@ -173,6 +183,18 @@ const Participant = () => {
           />
         )}
       </Flex>
+      <div
+        style={{
+          position: "fixed",
+          top: "3%",
+          left: "3%",
+          background: "inherit",
+        }}
+      >
+        <audio controls style={{ background: "inherit" }}>
+          <source src="/audio/backgroundSound.mp3" type="audio/mp3" />
+        </audio>
+      </div>
     </Flex>
   );
 };
