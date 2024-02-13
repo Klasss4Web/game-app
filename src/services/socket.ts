@@ -126,9 +126,10 @@ export async function joinExperience(
   payload: any,
   setData: (arg: any) => void,
   setPosition: (arg: string) => void,
-  setLoading: (arg: boolean) => void
+  setLoading: (arg: boolean) => void,
+  socketClient: any
 ) {
-  socketClient = io(socketBaseURL as string);
+  // socketClient = io(socketBaseURL as string);
   socketClient.emit(name, payload, (response: any) => {
     console.log(response, `EMIT RESPONSE FOR ${name}`); // ok
   });
@@ -137,13 +138,13 @@ export async function joinExperience(
     setData(data);
     setPosition("waiting");
     setLocalStorageItem(SAVED_ITEMS.participant, data);
-    socketEmitEvent(
-      SOCKET_EVENTS.adminGetExperienceParticipants,
-      {
-        experience_id: payload?.experience_id,
-      },
-      socketClient
-    );
+    // socketEmitEvent(
+    //   SOCKET_EVENTS.adminGetExperienceParticipants,
+    //   {
+    //     experience_id: payload?.experience_id,
+    //   },
+    //   socketClient
+    // );
     console.log("EXP RESP", data);
   });
   socketClient.on("joinExperienceError", (error: any) => {
@@ -157,9 +158,10 @@ export async function reJoinExperience(
   payload: any,
   setData: (arg: any) => void,
   setPosition: (arg: string) => void,
-  setLoading: (arg: boolean) => void
+  setLoading: (arg: boolean) => void,
+  socketClient: any
 ) {
-  socketClient = io(socketBaseURL as string);
+  // socketClient = io(socketBaseURL as string);
   socketClient.emit(
     SOCKET_EVENTS.rejoinExperience,
     payload,

@@ -20,8 +20,6 @@ import {
 } from "@/services/socket";
 import { errorNotifier, successNotifier } from "@/app/providers";
 import { formatToIsoDate } from "@/utils/dateFormat";
-import { getLocalStorageItem } from "@/utils/localStorage";
-import { SAVED_ITEMS } from "@/constants/appConstants";
 import { useSocket } from "@/contexts/SocketContext";
 
 type QuestionsProps = {
@@ -77,6 +75,9 @@ const QuestionBoard = ({
         setResponse(data?.result?.question);
         restart(setTimer());
         setLoading(false);
+      } else if (!data?.display_type) {
+         setResponse(data?.result);
+         pause();
       } else {
         setResponse(data?.result);
         pause();

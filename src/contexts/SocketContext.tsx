@@ -20,11 +20,21 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const token = getLocalStorageString(ACCESS_TOKEN);
 
   useEffect(() => {
-    const socketClient = io(socketBaseURL as string, {
-      extraHeaders: {
-        authorization: `Bearer ${token}`,
-      },
-    });
+    // const socketClient = io(socketBaseURL as string, {
+    //   extraHeaders: {
+    //     authorization: token ? `Bearer ${token}` : "",
+    //   },
+    // });
+    const socketClient = token
+      ? io(socketBaseURL as string, {
+          extraHeaders: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+      : io(socketBaseURL as string);
+
+    // const socketClient = io(socketBaseURL as string);
+
     setSocketConnection(socketClient as any);
     socketClient.on("connect", () => {
       console.log("CONNECTED IN REAL TIME", socketClient);

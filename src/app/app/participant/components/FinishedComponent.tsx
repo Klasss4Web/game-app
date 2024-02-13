@@ -90,9 +90,11 @@ const FinishedComponent = ({
         </Text>
         <Text color={COLORS.white}>Points</Text>
       </Circle>
-      {/* <Text fontSize={["1.2rem"]}>
-        The trivia game has ended. Thank you for answering
-      </Text> */}
+      {position === "finish" && (
+        <Text fontSize={["1.2rem"]}>
+          The trivia game has ended. Thank you for answering
+        </Text>
+      )}
       <Flex
         width="100%"
         justify="space-between"
@@ -132,7 +134,11 @@ const FinishedComponent = ({
         bg={COLORS.blue}
         borderRadius=".5rem"
       >
-        <Text fontSize={["1.6rem"]}>Player Rankings</Text>
+        <Text fontSize={["1.6rem"]}>
+          {position === "show_final_rank"
+            ? "Player Rankings"
+            : "Current Question Leaders"}
+        </Text>
         <PlayersRankingTable data={sortedDataInDescOrder} position={position} />
       </Flex>
     </HeroSectionWrapper>

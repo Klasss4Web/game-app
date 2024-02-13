@@ -1,3 +1,4 @@
+import { COLORS } from "@/constants/colors";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import React from "react";
 import { IconType } from "react-icons";
@@ -36,6 +37,7 @@ const ControlModalContent = ({
         <ICON
           size={40}
           cursor="pointer"
+          color={helperText === "End" ? COLORS.red : COLORS.success}
           onClick={() => {
             startExperience();
             // onClose();

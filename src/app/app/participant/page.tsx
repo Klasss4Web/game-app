@@ -63,17 +63,18 @@ const Participant = () => {
           (data: any) => {
             setData(data);
             setPosition("waiting");
+            // setPosition("");//FOR TESTING PURPOSE
             console.log("REJOIN EXP RESP", data);
-            socketConnection.emit(
-              SOCKET_EVENTS.adminGetExperienceParticipants,
-              { experience_id: participant?.experience_id },
-              (response: any) => {
-                console.log(
-                  response,
-                  `EMIT RESPONSE FOR ${SOCKET_EVENTS.adminGetExperienceParticipants}`
-                ); // ok
-              }
-            );
+            // socketConnection.emit(
+            //   SOCKET_EVENTS.adminGetExperienceParticipants,
+            //   { experience_id: participant?.experience_id },
+            //   (response: any) => {
+            //     console.log(
+            //       response,
+            //       `EMIT RESPONSE FOR ${SOCKET_EVENTS.adminGetExperienceParticipants}`
+            //     ); // ok
+            //   }
+            // );
           }
         );
 
@@ -163,7 +164,8 @@ const Participant = () => {
         {/* FINISHED GAME */}
         {(position === "final_score_board" ||
           position === "show_question_rank" ||
-          position === "show_final_rank") && (
+          position === "show_final_rank" ||
+          !position) && (
           <FinishedComponent
             position={position}
             participants={response as Participants[]}

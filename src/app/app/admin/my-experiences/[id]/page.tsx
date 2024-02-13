@@ -115,7 +115,7 @@ const ExperienceDashboard = () => {
     // const audioElement = new Audio("/audio/notification.wav");
     const audioElement = new Audio("/audio/backgroundSound.mp3");
     // audioElement.loop = true;
-    audioElement.play();
+    // audioElement.play();
     const token = getLocalStorageString(ACCESS_TOKEN);
     setLoading(true);
     const payload = {
@@ -123,14 +123,14 @@ const ExperienceDashboard = () => {
     };
 
     // getExperienceQuestion(payload, setLoading, setAllQuestions);
-    const socketClient = io(socketBaseURL as string, {
-      extraHeaders: {
-        authorization: `Bearer ${token}`,
-      },
-    });
+    // const socketClient = io(socketBaseURL as string, {
+    //   extraHeaders: {
+    //     authorization: `Bearer ${token}`,
+    //   },
+    // });
     // getParticipantsFinalScore(payload, socketClient);
     // if (allQuestions.length > 0) {
-    socketClient.emit(
+    socketConnection.emit(
       SOCKET_EVENTS.adminGetExperienceParticipants,
       { experience_id: params?.id },
       (response: any) => {
@@ -141,11 +141,10 @@ const ExperienceDashboard = () => {
       }
     );
     // }
-    socketClient.on(
+    socketConnection.on(
       SOCKET_EVENTS.getExperienceParticipantResponse,
       (data: any) => {
         const audioElement = new Audio("/audio/notification1.wav");
-        // audioElement.loop = true;
         audioElement.play();
         const removeDuplicateData = getUniqueArray(data);
         setParticipants(removeDuplicateData);
@@ -156,7 +155,7 @@ const ExperienceDashboard = () => {
         setLoading(false);
       }
     );
-    socketClient.on(
+    socketConnection.on(
       SOCKET_EVENTS.getExperienceParticipantError,
       (error: any) => {
         // setData(data);
@@ -169,22 +168,22 @@ const ExperienceDashboard = () => {
       }
     );
 
-    // getParticipantsCurrentScore(payload, socketClient);
-    // socketClient.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
+    // getParticipantsCurrentScore(payload, socketConnection);
+    // socketConnection.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
     //   console.log("ADMIN JOIN EXP RESP", data);
     // });
     return () => {
-      socketClient.removeAllListeners(
+      socketConnection.removeAllListeners(
         SOCKET_EVENTS.adminGetExperienceParticipants
       );
-      socketClient.removeAllListeners(
+      socketConnection.removeAllListeners(
         SOCKET_EVENTS.getExperienceParticipantResponse
       );
-      socketClient.removeAllListeners(
+      socketConnection.removeAllListeners(
         SOCKET_EVENTS.getExperienceParticipantError
       );
     };
-  }, [params?.id, participants.length]);
+  }, [params?.id, participants.length, socketConnection]);
 
   const participantsWhoAnsweredQuest = participants?.filter(
     (participant) => participant?.is_question_answered

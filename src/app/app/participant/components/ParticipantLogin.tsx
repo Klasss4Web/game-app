@@ -7,6 +7,7 @@ import { COLORS } from "@/constants/colors";
 import { Text } from "@chakra-ui/react";
 import HeroSectionWrapper from "../../admin/my-experiences/components/HeroSectionWrapper";
 import { SOCKET_EVENTS, joinExperience } from "@/services/socket";
+import { useSocket } from "@/contexts/SocketContext";
 
 type ParticipantLogin = {
   setPosition: (arg: string) => void;
@@ -14,6 +15,8 @@ type ParticipantLogin = {
 };
 
 const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
+
+  const {socketConnection} = useSocket()
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [experienceResponse, setExperienceResponse] = useState({});
@@ -31,7 +34,8 @@ const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
       payload,
       setExperienceResponse,
       setPosition,
-      setLoading
+      setLoading,
+      socketConnection
     );
     // setLoading(false);
   };
