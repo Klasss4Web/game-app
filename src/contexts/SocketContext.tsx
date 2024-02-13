@@ -17,27 +17,27 @@ type SocketProviderProps = {
 
 export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socketConnection, setSocketConnection] = useState(null);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const token = getLocalStorageString(ACCESS_TOKEN);
 
   useEffect(() => {
-    // const socketClient = io(socketBaseURL as string, {
-    //   extraHeaders: {
-    //     authorization: token ? `Bearer ${token}` : "",
-    //   },
-    // });
-    const socketClient = token
-      ? io(socketBaseURL as string, {
-          extraHeaders: {
-            authorization: `Bearer ${token}`,
-          },
-        })
-      : io(socketBaseURL as string);
+    // const socketClient = token
+    //   ? io(socketBaseURL as string, {
+    //       extraHeaders: {
+    //         authorization: `Bearer ${token}`,
+    //       },
+    //     })
+    //   : io(socketBaseURL as string);
 
-    // const socketClient = io(socketBaseURL as string);
+    const socketClient = io(socketBaseURL as string, {
+      extraHeaders: {
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    });
 
     setSocketConnection(socketClient as any);
     socketClient.on("connect", () => {
-      console.log("CONNECTED IN REAL TIME", socketClient);
+      console.log("CONNECTED IN REAL TIME", socketClient.active);
       successNotifier("Connection restored");
     });
 
@@ -51,17 +51,25 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         socketClient.disconnect();
       }
     };
-  }, []);
+  }, [refresh]);
+
+  //  const dispatch = (incoming) => {
+  //    setState((prev) => ({ ...prev, ...incoming }));
+  //  };
 
   console.log("socketConnection", socketConnection);
 
   return (
-    <SocketContext.Provider value={{ socketConnection }}>
+    <SocketContext.Provider value={{ socketConnection, setRefresh, refresh }}>
       {children}
     </SocketContext.Provider>
   );
 };
 
 export const useSocket = () => {
-  return useContext<{ socketConnection: any }>(SocketContext as any);
+  return useContext<{
+    socketConnection: any;
+    refresh: boolean;
+    setRefresh: (arg: boolean) => void;
+  }>(SocketContext as any);
 };

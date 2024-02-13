@@ -27,6 +27,7 @@ const WaitingToStart = ({
 
   const { socketConnection } = useSocket();
   console.log("socketConnection", socketConnection);
+  
 
   useEffect(() => {
     setLoading(false);

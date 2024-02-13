@@ -47,7 +47,7 @@ import Participant from "@/app/app/participant/page";
 
 const ExperienceDashboard = () => {
   const params = useParams();
-  const { socketConnection } = useSocket();
+  const { socketConnection, setRefresh, refresh } = useSocket();
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeLoading, setActiveLoading] = useState(false);
@@ -110,6 +110,10 @@ const ExperienceDashboard = () => {
       setData
     );
   };
+
+  if (!socketConnection.connected) {
+    setRefresh(!refresh);
+  }
 
   useEffect(() => {
     // const audioElement = new Audio("/audio/notification.wav");

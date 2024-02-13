@@ -36,7 +36,11 @@ const Participant = () => {
   >({} as Questions);
   const [loading, setLoading] = useState(true);
   const isMounted = useIsMounted();
-  const { socketConnection } = useSocket();
+  const { socketConnection, setRefresh, refresh } = useSocket();
+
+  if (!socketConnection.connected) {
+    setRefresh(!refresh);
+  }
 
   const reJoinExperience = useCallback(
     (
