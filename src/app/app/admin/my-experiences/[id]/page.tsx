@@ -29,8 +29,10 @@ import {
   getExperienceQuestion,
   getParticipantsFinalScore,
   handleAdminControls,
+  participantJoinNotification,
   // handleShowCorrectAnswer,
   setActiveQuestion,
+  socketListenEvent,
 } from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
 import { getLocalStorageString } from "@/utils/localStorage";
@@ -111,11 +113,10 @@ const ExperienceDashboard = () => {
     );
   };
 
-  if (!socketConnection.connected) {
-    setRefresh(!refresh);
-  }
-
   useEffect(() => {
+    // if (!socketConnection?.connected) {
+    //   setRefresh(!refresh);
+    // }
     // const audioElement = new Audio("/audio/notification.wav");
     const audioElement = new Audio("/audio/backgroundSound.mp3");
     // audioElement.loop = true;
@@ -172,11 +173,18 @@ const ExperienceDashboard = () => {
       }
     );
 
+    participantJoinNotification(
+      socketConnection,
+      participants,
+      setParticipants
+    );
+
     // getParticipantsCurrentScore(payload, socketConnection);
     // socketConnection.on(SOCKET_EVENTS.joinExperienceResponse, (data: any) => {
     //   console.log("ADMIN JOIN EXP RESP", data);
     // });
     return () => {
+      socketConnection.removeAllListeners(SOCKET_EVENTS.adminJoinNotification);
       socketConnection.removeAllListeners(
         SOCKET_EVENTS.adminGetExperienceParticipants
       );
@@ -187,7 +195,14 @@ const ExperienceDashboard = () => {
         SOCKET_EVENTS.getExperienceParticipantError
       );
     };
-  }, [params?.id, participants.length, socketConnection]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    // refresh,
+    params?.id,
+    participants?.length,
+    socketConnection,
+    // socketConnection?.connected,
+  ]);
 
   const participantsWhoAnsweredQuest = participants?.filter(
     (participant) => participant?.is_question_answered

@@ -38,10 +38,6 @@ const Participant = () => {
   const isMounted = useIsMounted();
   const { socketConnection, setRefresh, refresh } = useSocket();
 
-  if (!socketConnection.connected) {
-    setRefresh(!refresh);
-  }
-
   const reJoinExperience = useCallback(
     (
       payload: any,
@@ -98,6 +94,9 @@ const Participant = () => {
   );
 
   useEffect(() => {
+    // if (!socketConnection?.connected) {
+    //   setRefresh(!refresh);
+    // }
     if (participant?.experience_id === experienceId) {
       const payload = {
         nonce_id: participant?.nonce_id,
@@ -110,10 +109,12 @@ const Participant = () => {
       reJoinExperience(payload, setRejoinData, setPosition, setLoading);
     }
   }, [
+    // refresh,
     participant?.experience_id,
     participant?.nonce_id,
     experienceId,
     reJoinExperience,
+    // socketConnection?.connected,
     // position,
   ]);
 

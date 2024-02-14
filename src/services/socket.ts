@@ -14,6 +14,7 @@ import { Participants } from "@/types/experience";
 export const SOCKET_EVENTS = {
   CONNECT: "connect",
   DISCONNECT: "disconnect",
+  adminJoinNotification: "hostNotification",
   joinExperience: "joinExperience",
   joinExperienceError: "joinExperienceError",
   joinExperienceResponse: "joinExperienceResponse",
@@ -401,10 +402,10 @@ export function answerExperienceQuestion(
 
   socketClient.on(
     SOCKET_EVENTS.answerExperienceQuestionResponse,
-    (error: any) => {
+    (data: any) => {
       console.log(
         `MSG RESP FOR ${SOCKET_EVENTS.answerExperienceQuestionResponse}`,
-        error
+        data
       );
       successNotifier("Submitted...");
       // errorNotifier(error?.message);
@@ -483,3 +484,22 @@ export function handleAdminControls(
   socketListenEvent(responseName, socketClient, setData);
   socketListenError(errorName, socketClient);
 }
+
+export const participantJoinNotification = (
+  socketConnection: any,
+  participants: Participants[],
+  setData: (arg: Participants[]) => void
+) => {
+  socketConnection.on(
+    SOCKET_EVENTS.adminJoinNotification,
+    (data: { payload: Participants }) => {
+      setData([data?.payload, ...participants]);
+      console.log(
+        `MSG RESP FOR ${SOCKET_EVENTS.answerExperienceQuestionResponse}`,
+        data
+      );
+      successNotifier(`${data?.payload?.username} Joined`);
+      // errorNotifier(error?.message);
+    }
+  );
+};

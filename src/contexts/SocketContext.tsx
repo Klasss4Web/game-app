@@ -51,7 +51,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         socketClient.disconnect();
       }
     };
-  }, [refresh]);
+  }, []);
 
   //  const dispatch = (incoming) => {
   //    setState((prev) => ({ ...prev, ...incoming }));
