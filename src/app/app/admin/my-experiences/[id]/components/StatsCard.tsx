@@ -8,11 +8,13 @@ import { ExperienceData } from "@/types/experience";
 
 type StatsCardProps = {
   experience: ExperienceData;
+  totalParticipants: number;
   participantsWhoAnsweredQuest: number;
 };
 
 const StatsCard = ({
   experience,
+  totalParticipants,
   participantsWhoAnsweredQuest,
 }: StatsCardProps) => {
   return (
@@ -27,7 +29,7 @@ const StatsCard = ({
               statNumber = experience?.id as number;
               break;
             case "participant_count":
-              statNumber = experience?.participant_count;
+              statNumber = totalParticipants;
               break;
             case "no_of_questions":
               statNumber = experience?.no_of_questions;

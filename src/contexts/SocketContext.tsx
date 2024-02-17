@@ -1,7 +1,13 @@
 // SocketContext.js
 "use client";
 
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+} from "react";
 import io from "socket.io-client";
 
 import { errorNotifier, successNotifier } from "@/app/providers";

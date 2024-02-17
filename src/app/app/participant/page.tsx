@@ -10,7 +10,10 @@ import QuestionBoard from "./components/QuestionBoard";
 import { SOCKET_EVENTS } from "@/services/socket";
 import { useSearchParams } from "next/navigation";
 import { SAVED_ITEMS } from "@/constants/appConstants";
-import { getLocalStorageItem } from "@/utils/localStorage";
+import {
+  getLocalStorageItem,
+  getLocalStorageString,
+} from "@/utils/localStorage";
 import { LoggedInParticipant } from "@/types/user";
 import { errorNotifier } from "@/app/providers";
 import { FullPageLoader } from "@/components/common/FullPageLoader";
@@ -45,6 +48,14 @@ const Participant = () => {
       setPosition: (arg: string) => void,
       setLoading: (arg: boolean) => void
     ) => {
+      const savedPosition = getLocalStorageString("position");
+      const saveQuestions = getLocalStorageItem("question");
+       if (position) {
+         setPosition(savedPosition as string);
+         setResponse((saveQuestions as Questions[]) || []);
+       } else {
+         setPosition("waiting");
+       }
       if (socketConnection && typeof socketConnection.emit === "function") {
         console.log("socketConnection", socketConnection);
         socketConnection.emit(
@@ -62,8 +73,8 @@ const Participant = () => {
           SOCKET_EVENTS.rejoinExperienceResponse,
           (data: any) => {
             setData(data);
-            setPosition("waiting");
-            // setPosition("");//FOR TESTING PURPOSE
+            // setPosition("waiting");
+
             console.log("REJOIN EXP RESP", data);
             // socketConnection.emit(
             //   SOCKET_EVENTS.adminGetExperienceParticipants,
@@ -90,7 +101,7 @@ const Participant = () => {
         console.warn("Socket connection not ready yet.");
       }
     },
-    [socketConnection, participant?.experience_id]
+    [socketConnection]
   );
 
   useEffect(() => {

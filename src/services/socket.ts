@@ -330,14 +330,15 @@ export async function setActiveQuestion(
   payload: any,
   setLoading: (arg: boolean) => void,
   setData: (arg: any) => void,
-  restart: (arg: Date) => void
+  restart: (arg: Date) => void,
+  socketClient: any
 ) {
   setLoading(true);
-  socketClient = io(socketBaseURL as string, {
-    extraHeaders: {
-      authorization: `Bearer ${token}`,
-    },
-  });
+  // socketClient = io(socketBaseURL as string, {
+  //   extraHeaders: {
+  //     authorization: `Bearer ${token}`,
+  //   },
+  // });
   socketClient.emit(
     SOCKET_EVENTS.adminSetActiveQuestion,
     payload,

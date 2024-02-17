@@ -54,6 +54,7 @@ const ExperienceDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [activeLoading, setActiveLoading] = useState(false);
   const [participants, setParticipants] = useState<Participants[]>([]);
+  const [isChecked, setIsChecked] = useState(false);
   const [activeQuestionResponse, setActiveQuestionResponse] =
     useState<Questions>({} as Questions);
   const [sliceIndex, setSliceIndex] = useState(0);
@@ -87,22 +88,33 @@ const ExperienceDashboard = () => {
   ) => {
     if (specificExperience?.data?.experience_status === "finish")
       return errorNotifier("This experience is finished");
+    if (specificExperience?.data?.experience_status === "initial")
+      return errorNotifier("Please start experience to begin");
+    setControlName(null);
     setActiveQuestion(
       payload,
       setActiveLoading,
       setActiveQuestionResponse,
-      restart
+      restart,
+      socketConnection
     );
     setSliceIndex(questNo);
   };
 
+  const [controlName, setControlName] = useState<string | null>("");
+
   const handleViewersControl = (
+    switchName: string | null,
     eventName: string,
     reponseName: string,
     errorName: string,
     setData: (arg: Participants[]) => void = (arg) => null
   ) => {
     const payload = { experience_id: specificExperience?.data?.id };
+    //  console.log("TARGET", event.target.value===controlName);
+    //   if (event.target.value === controlName) {
+    //     setIsChecked(true);
+    setControlName(switchName === controlName ? null : switchName);
     handleAdminControls(
       eventName,
       reponseName,
@@ -111,6 +123,9 @@ const ExperienceDashboard = () => {
       socketConnection,
       setData
     );
+    // } else {
+    //   setIsChecked(false);
+    // }
   };
 
   useEffect(() => {
@@ -195,7 +210,7 @@ const ExperienceDashboard = () => {
         SOCKET_EVENTS.getExperienceParticipantError
       );
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     // refresh,
     params?.id,
@@ -230,6 +245,7 @@ const ExperienceDashboard = () => {
   //   enabled: !!params?.id,
   // });
   // console.log("specificExperience", specificExperience, "QUEST", questions);
+
   return isLoading ? (
     <FullPageLoader />
   ) : (
@@ -278,7 +294,13 @@ const ExperienceDashboard = () => {
               alignItems="center"
               width="25%"
             >
-              <Switch id="manually-start" size="lg" />
+              <Switch
+                id="manually-start"
+                size="lg"
+                // isChecked={isChecked}
+                checked={controlName === "manual"}
+                value="manual"
+              />
               <FormLabel
                 htmlFor="manually-start"
                 mb="0"
@@ -313,13 +335,21 @@ const ExperienceDashboard = () => {
               <Switch
                 id="correct-answers"
                 size="lg"
+                // isChecked={isChecked}
+                isChecked={controlName === "correct-answer"}
+                value="correct-answer"
                 onChange={
-                  () =>
+                  (e) => {
+                    // setControlName(
+                    //   "correct-answer" === controlName ? null : "correct-answer"
+                    // );
                     handleViewersControl(
+                      "correct-answer",
                       SOCKET_EVENTS.adminShowCorrectAnswer,
                       SOCKET_EVENTS.showCorrectAnswerResponse,
                       SOCKET_EVENTS.showCorrectAnswerError
-                    )
+                    );
+                  }
                   // handleShowCorrectAnswer(
                   //   {
                   //     experience_id: specificExperience?.data?.id,
@@ -346,14 +376,23 @@ const ExperienceDashboard = () => {
               <Switch
                 id="question-ranking"
                 size="lg"
-                onChange={() =>
+                // isChecked={isChecked}
+                value="question-ranking"
+                isChecked={controlName === "question-ranking"}
+                onChange={(e) => {
+                  // setControlName(
+                  //   "question-ranking" === controlName
+                  //     ? null
+                  //     : "question-ranking"
+                  // );
                   handleViewersControl(
+                    "question-ranking",
                     SOCKET_EVENTS.adminShowQuestionRank,
                     SOCKET_EVENTS.showQuestionRankResponse,
                     SOCKET_EVENTS.showQuestionRankError,
                     setParticipants
-                  )
-                }
+                  );
+                }}
               />
               <FormLabel
                 htmlFor="question-ranking"
@@ -373,14 +412,21 @@ const ExperienceDashboard = () => {
               <Switch
                 id="leader-board"
                 size="lg"
-                onChange={() =>
+                // isChecked={isChecked}
+                isChecked={controlName === "leader-board"}
+                value="leader-board"
+                onChange={(e) => {
+                  // setControlName(
+                  //   "leader-board" === controlName ? null : "leader-board"
+                  // );
                   handleViewersControl(
+                    "leader-board",
                     SOCKET_EVENTS.adminShowFinalRank,
                     SOCKET_EVENTS.showFinalRankResponse,
                     SOCKET_EVENTS.showFinalRankError,
                     setParticipants
-                  )
-                }
+                  );
+                }}
               />
               <FormLabel
                 htmlFor="leader-board"
@@ -410,6 +456,7 @@ const ExperienceDashboard = () => {
           </Flex>
         </GameControlExperienceCard>
         <StatsCard
+          totalParticipants={getUniqueArray(participants)?.length}
           experience={specificExperience?.data}
           participantsWhoAnsweredQuest={participantsWhoAnsweredQuest?.length}
         />

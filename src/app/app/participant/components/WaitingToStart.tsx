@@ -10,6 +10,7 @@ import { SOCKET_EVENTS, socketClient } from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
 import { Questions } from "@/types/questions";
 import { useSocket } from "@/contexts/SocketContext";
+import { setLocalStorageItem, setLocalStorageString } from "@/utils/localStorage";
 
 type WaitingToStartProps = {
   setPosition: (arg: string) => void;
@@ -27,12 +28,13 @@ const WaitingToStart = ({
 
   const { socketConnection } = useSocket();
   console.log("socketConnection", socketConnection);
-  
 
   useEffect(() => {
     setLoading(false);
     socketConnection.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
       setResponse(data?.result?.question);
+      setLocalStorageString("position", data?.display_type);
+      setLocalStorageItem("question", data?.result?.question);
       if (data?.display_type === "status") {
         setPosition(data?.result?.experience_status);
       } else {

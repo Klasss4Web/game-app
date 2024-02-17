@@ -47,7 +47,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       if (new Date().getTime() > expiryDate.getTime()) {
         refreshAccessToken();
       } else {
-        router.push(ROUTES.my_experience);
+        // router.push(ROUTES.my_experience);
         setIsLoggedin(true);
       }
     } else {

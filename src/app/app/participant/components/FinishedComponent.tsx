@@ -11,7 +11,11 @@ import { SOCKET_EVENTS } from "@/services/socket";
 import { Questions } from "@/types/questions";
 import { Participants } from "@/types/experience";
 import { LoggedInParticipant } from "@/types/user";
-import { getLocalStorageItem } from "@/utils/localStorage";
+import {
+  getLocalStorageItem,
+  setLocalStorageItem,
+  setLocalStorageString,
+} from "@/utils/localStorage";
 import { SAVED_ITEMS } from "@/constants/appConstants";
 import { getUniqueArray } from "@/utils/uniqueArray";
 
@@ -34,7 +38,7 @@ const FinishedComponent = ({
   const loggedInParticipant = getLocalStorageItem<LoggedInParticipant>(
     SAVED_ITEMS.participant
   );
-  const removedDuplicateData = getUniqueArray(participants);
+  const removedDuplicateData = getUniqueArray(participants) || [];
   const sortedDataInDescOrder = removedDuplicateData
     ?.sort((a, b) => b.point - a.point)
     ?.map((sortedData, index) => ({ ...sortedData, index }));
@@ -53,12 +57,15 @@ const FinishedComponent = ({
         data
       );
       setPosition(data?.display_type);
+      setLocalStorageString("position", data?.display_type);
       if (data?.display_type === "question") {
         setResponse(data?.result?.question);
+        setLocalStorageItem("question", data?.result?.question);
         // restart(setTimer());
         // setLoading(false);
       } else {
         setResponse(data?.result);
+        setLocalStorageItem("question", data?.result);
       }
     });
 

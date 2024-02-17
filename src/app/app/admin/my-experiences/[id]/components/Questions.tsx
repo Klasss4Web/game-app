@@ -12,7 +12,7 @@ import {
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { BiPlusCircle } from "react-icons/bi";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { CustomBtn } from "@/components/common/CustomBtn";
 import { Formcontrol } from "@/components/common/FormControl";
 import { COLORS } from "@/constants/colors";
@@ -81,10 +81,13 @@ QuestionSectionProps) => {
     mutate(payload);
   };
 
+  const queryClient = new QueryClient();
+
   const { mutate, isLoading } = useMutation({
     mutationFn: createQuestions,
-    mutationKey: ["all-questions"],
+    mutationKey: ["create-questions"],
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["all-questions"] });
       console.log("data", data);
       //  onClose && onClose();
       setTabToShow("allQuestions");
