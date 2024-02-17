@@ -12,8 +12,13 @@ import io from "socket.io-client";
 
 import { errorNotifier, successNotifier } from "@/app/providers";
 import { socketBaseURL } from "@/services/api";
-import { ACCESS_TOKEN } from "@/constants/appConstants";
-import { getLocalStorageString } from "@/utils/localStorage";
+import { ACCESS_TOKEN, SAVED_ITEMS } from "@/constants/appConstants";
+import {
+  getLocalStorageItem,
+  getLocalStorageString,
+} from "@/utils/localStorage";
+import { SOCKET_EVENTS } from "@/services/socket";
+import { LoggedInParticipant } from "@/types/user";
 
 const SocketContext = createContext({});
 
@@ -25,6 +30,9 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socketConnection, setSocketConnection] = useState(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const token = getLocalStorageString(ACCESS_TOKEN);
+  const participant = getLocalStorageItem<LoggedInParticipant>(
+    SAVED_ITEMS.participant
+  );
 
   useEffect(() => {
     // const socketClient = token
@@ -40,11 +48,24 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         authorization: token ? `Bearer ${token}` : "",
       },
     });
-
+    const payload = {
+      nonce_id: participant?.nonce_id,
+      experience_id: participant?.experience_id,
+    };
     setSocketConnection(socketClient as any);
     socketClient.on("connect", () => {
       console.log("CONNECTED IN REAL TIME", socketClient.active);
       successNotifier("Connection restored");
+      socketClient.emit(
+        SOCKET_EVENTS.rejoinExperience,
+        payload,
+        (response: any) => {
+          console.log(
+            response,
+            `EMIT RESPONSE FOR ${SOCKET_EVENTS.rejoinExperience}`
+          );
+        }
+      );
     });
 
     socketClient.on("disconnect", () => {
@@ -57,7 +78,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         socketClient.disconnect();
       }
     };
-  }, []);
+  }, [token]);
 
   //  const dispatch = (incoming) => {
   //    setState((prev) => ({ ...prev, ...incoming }));

@@ -87,10 +87,10 @@ const FinishedComponent = ({
         height="8rem"
         bg={COLORS.secondary}
         position="absolute"
-        top="-12%"
+        top={["-4%", "-4%", "-7%", "-7%"]}
         // zIndex={10}
       >
-        <Text color={COLORS.white} mt="2rem">
+        <Text color={COLORS.white} mt={["1rem", "0", "1rem"]}>
           {position === "show_final_rank"
             ? getCurrentParticipantScore?.total_point
             : getCurrentParticipantScore?.point}
@@ -115,7 +115,13 @@ const FinishedComponent = ({
           <Text>{(getCurrentParticipantScore?.index as number) + 1}</Text>
           <Text>Your Rank</Text>
         </Box>
-        <Box width="36%" color={COLORS.orange}>
+        <Box
+          width="36%"
+          color={COLORS.red}
+          position="relative"
+          zIndex={10000}
+          mt={["1.5rem"]}
+        >
           {position === "show_question_rank" ? (
             <>
               <Text>Next question coming up...</Text>

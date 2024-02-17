@@ -21,6 +21,8 @@ import useIsMounted from "@/hooks/useIsMounted";
 import { Questions } from "@/types/questions";
 import { useSocket } from "@/contexts/SocketContext";
 import { Participants } from "@/types/experience";
+import { BiVolumeMute } from "react-icons/bi";
+import { GoUnmute } from "react-icons/go";
 
 const Participant = () => {
   const params = useSearchParams();
@@ -28,6 +30,7 @@ const Participant = () => {
   // const [isFinished, setIsFinished] = useState<boolean>(false);
 
   const [position, setPosition] = useState<string>("login");
+  const [playAudio, setPlayAudio] = useState(true);
 
   const experienceId = params.get("id");
   const participant = getLocalStorageItem<LoggedInParticipant>(
@@ -50,12 +53,12 @@ const Participant = () => {
     ) => {
       const savedPosition = getLocalStorageString("position");
       const saveQuestions = getLocalStorageItem("question");
-       if (position) {
-         setPosition(savedPosition as string);
-         setResponse((saveQuestions as Questions[]) || []);
-       } else {
-         setPosition("waiting");
-       }
+      if (position) {
+        setPosition(savedPosition as string);
+        setResponse((saveQuestions as Questions[]) || []);
+      } else {
+        setPosition("waiting");
+      }
       if (socketConnection && typeof socketConnection.emit === "function") {
         console.log("socketConnection", socketConnection);
         socketConnection.emit(
@@ -103,24 +106,30 @@ const Participant = () => {
     },
     [socketConnection]
   );
-
+  console.log("PLAY", playAudio);
   useEffect(() => {
     // if (!socketConnection?.connected) {
     //   setRefresh(!refresh);
     // }
+    // const audioElement = new Audio("/audio/backgroundSound.mp3");
+
+    // if (playAudio) {
+    //   audioElement.play();
+    //   audioElement.loop = true;
+    // } else {
+    //   audioElement.pause();
+    // }
+
     if (participant?.experience_id === experienceId) {
       const payload = {
         nonce_id: participant?.nonce_id,
         experience_id: participant?.experience_id,
       };
       console.log("REJOINED");
-      // const audioElement = new Audio("/audio/backgroundSound.mp3");
-      // audioElement.loop = true;
-      // audioElement.play();
       reJoinExperience(payload, setRejoinData, setPosition, setLoading);
     }
   }, [
-    // refresh,
+    playAudio,
     participant?.experience_id,
     participant?.nonce_id,
     experienceId,
@@ -209,9 +218,24 @@ const Participant = () => {
           background: "inherit",
         }}
       >
-        <audio controls style={{ background: "inherit" }}>
+        {!playAudio ? (
+          <GoUnmute
+            size={26}
+            color={COLORS.red}
+            cursor="pointer"
+            onClick={() => setPlayAudio(true)}
+          />
+        ) : (
+          <BiVolumeMute
+            size={26}
+            color={COLORS.red}
+            cursor="pointer"
+            onClick={() => setPlayAudio(false)}
+          />
+        )}
+        {/* <audio controls style={{ background: "inherit" }}>
           <source src="/audio/backgroundSound.mp3" type="audio/mp3" />
-        </audio>
+        </audio> */}
       </div>
     </Flex>
   );

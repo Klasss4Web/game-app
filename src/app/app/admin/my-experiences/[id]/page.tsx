@@ -288,7 +288,7 @@ const ExperienceDashboard = () => {
         <GameControlExperienceCard>
           <Text fontSize="1.4rem">Viewer Controls</Text>
           <Flex width="100%" wrap="wrap">
-            <FormControl
+            {/* <FormControl
               display="flex"
               flexDirection="column"
               alignItems="center"
@@ -297,7 +297,6 @@ const ExperienceDashboard = () => {
               <Switch
                 id="manually-start"
                 size="lg"
-                // isChecked={isChecked}
                 checked={controlName === "manual"}
                 value="manual"
               />
@@ -325,7 +324,7 @@ const ExperienceDashboard = () => {
               >
                 Show Live Answer Results
               </FormLabel>
-            </FormControl>
+            </FormControl> */}
             <FormControl
               display="flex"
               flexDirection="column"

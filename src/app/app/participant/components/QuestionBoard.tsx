@@ -21,7 +21,10 @@ import {
 import { errorNotifier, successNotifier } from "@/app/providers";
 import { formatToIsoDate } from "@/utils/dateFormat";
 import { useSocket } from "@/contexts/SocketContext";
-import { setLocalStorageItem, setLocalStorageString } from "@/utils/localStorage";
+import {
+  setLocalStorageItem,
+  setLocalStorageString,
+} from "@/utils/localStorage";
 
 type QuestionsProps = {
   questions: Questions;
@@ -73,16 +76,16 @@ const QuestionBoard = ({
       );
       setPosition(data?.display_type);
       setLocalStorageString("position", data?.display_type);
-      
+      // pause();
       if (data?.display_type === "question") {
         setResponse(data?.result?.question);
         setLocalStorageItem("question", data?.result?.question);
         restart(setTimer());
         setLoading(false);
       } else if (!data?.display_type) {
-         setResponse(data?.result);
-         setLocalStorageItem("question", data?.result);
-         pause();
+        setResponse(data?.result);
+        setLocalStorageItem("question", data?.result);
+        pause();
       } else {
         setResponse(data?.result);
         pause();
@@ -99,7 +102,15 @@ const QuestionBoard = ({
     return () => {
       socketConnection.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
     };
-  }, [setResponse, setPosition, restart, pause, questions?.id, selectedBtnId, socketConnection]);
+  }, [
+    setResponse,
+    setPosition,
+    restart,
+    pause,
+    questions?.id,
+    selectedBtnId,
+    socketConnection,
+  ]);
 
   function answerExperienceQuestions(
     payload: SubmitAnswerPayload,
@@ -173,7 +184,7 @@ const QuestionBoard = ({
   return (
     <Box width="100%" position="relative">
       <Text color={COLORS.white} fontSize="1.2rem" my="1rem" textAlign="center">
-        Answer correctly faster to earn more points!
+        Answer correctly & faster to earn more points!
       </Text>
       <Box
         width="100%"
