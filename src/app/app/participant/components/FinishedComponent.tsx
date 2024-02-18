@@ -18,6 +18,7 @@ import {
 } from "@/utils/localStorage";
 import { SAVED_ITEMS } from "@/constants/appConstants";
 import { getUniqueArray } from "@/utils/uniqueArray";
+import BackgroundVideo from "./BackgroundVideo";
 
 type FinishedComponentProps = {
   participants: Participants[];
@@ -77,7 +78,7 @@ const FinishedComponent = ({
     <HeroSectionWrapper
       bg={COLORS.formGray}
       align="center"
-      height="75vh"
+      height={position ? "75vh" : "100vh"}
       position="relative"
       overflowY="scroll"
     >
@@ -87,7 +88,7 @@ const FinishedComponent = ({
         height="8rem"
         bg={COLORS.secondary}
         position="absolute"
-        top={["-4%", "-4%", "-7%", "-7%"]}
+        top={position ? ["-4%", "-4%", "-7%", "-7%"] : ["0%"]}
         // zIndex={10}
       >
         <Text color={COLORS.white} mt={["1rem", "0", "1rem"]}>
@@ -102,42 +103,46 @@ const FinishedComponent = ({
           The trivia game has ended. Thank you for answering
         </Text>
       )}
-      <Flex
-        width="100%"
-        justify="space-between"
-        align="center"
-        padding="1rem 0"
-        color={COLORS.white}
-        bg={COLORS.secondary}
-        borderRadius=".5rem"
-      >
-        <Box width="30%">
-          <Text>{(getCurrentParticipantScore?.index as number) + 1}</Text>
-          <Text>Your Rank</Text>
-        </Box>
-        <Box
-          width="36%"
-          color={COLORS.red}
-          position="relative"
-          zIndex={10000}
-          mt={["1.5rem"]}
+      {position && (
+        <Flex
+          width="100%"
+          justify="space-between"
+          align="center"
+          padding="1rem 0"
+          color={COLORS.white}
+          bg={COLORS.secondary}
+          borderRadius=".5rem"
         >
-          {position === "show_question_rank" ? (
-            <>
-              <Text>Next question coming up...</Text>
-            </>
-          ) : (
-            <>
-              <Text>{sortedDataInDescOrder?.[0]?.username}</Text>
-              <Text>Top Genius</Text>
-            </>
-          )}
-        </Box>
-        <Box width="30%">
-          <Text>{sortedDataInDescOrder?.length}</Text>
-          <Text>Participants</Text>
-        </Box>
-      </Flex>
+          <Box width="30%">
+            <Text>{(getCurrentParticipantScore?.index as number) + 1}</Text>
+            <Text>Your Rank</Text>
+          </Box>
+          <Box
+            width="36%"
+            color={COLORS.red}
+            position="relative"
+            zIndex={10000}
+            mt={["1.5rem"]}
+          >
+            {position === "show_question_rank" ? (
+              <>
+                <Text>Next question coming up...</Text>
+              </>
+            ) : (
+              <>
+                <Text>{sortedDataInDescOrder?.[0]?.username}</Text>
+                <Text>Top Genius</Text>
+              </>
+            )}
+          </Box>
+          <Box width="30%">
+            <Text>{sortedDataInDescOrder?.length}</Text>
+            <Text>Participants</Text>
+          </Box>
+        </Flex>
+      )}
+      <BackgroundVideo />
+
       <Flex
         direction="column"
         width="100%"

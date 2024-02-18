@@ -28,7 +28,7 @@ const PlayersRankingTable = ({ data, position }: PlayersRankingTableProps) => {
   // );
   // console.log("getCurrentParticipantScore", getCurrentParticipantScore);
   return (
-    <TableContainer h="40vh" overflowY="scroll">
+    <TableContainer h={position ? "40vh" : "10vh"} overflowY="scroll">
       <Table variant="striped" colorScheme="teal">
         <TableCaption>Players scores and rankings</TableCaption>
         <Thead>

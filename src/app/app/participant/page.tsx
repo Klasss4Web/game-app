@@ -58,6 +58,7 @@ const Participant = () => {
         setResponse((saveQuestions as Questions[]) || []);
       } else {
         setPosition("waiting");
+        // setPosition("");
       }
       if (socketConnection && typeof socketConnection.emit === "function") {
         console.log("socketConnection", socketConnection);
@@ -159,20 +160,24 @@ const Participant = () => {
       </Box>
       <Flex
         direction="column"
-        width={["100%", "100%", "50%"]}
+        width={position ? ["100%", "100%", "50%"] : []}
         justify="center"
         align="center"
       >
-        <Image
-          src="/images/loginBg.jpg"
-          width={150}
-          height={150}
-          borderRadius="50%"
-          alt=""
-        />
-        <Heading color={COLORS.white} fontWeight="normal">
-          Genius Game
-        </Heading>
+        {position && (
+          <>
+            <Image
+              src="/images/loginBg.jpg"
+              width={150}
+              height={150}
+              borderRadius="50%"
+              alt=""
+            />
+            <Heading color={COLORS.white} fontWeight="normal">
+              Genius Game
+            </Heading>
+          </>
+        )}
         {(position === "waiting" || position === "active") && (
           <WaitingToStart
             setPosition={setPosition}
