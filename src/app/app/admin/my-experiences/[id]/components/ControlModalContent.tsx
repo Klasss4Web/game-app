@@ -2,7 +2,6 @@ import { COLORS } from "@/constants/colors";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import React from "react";
 import { IconType } from "react-icons";
-import { FaRegCirclePlay } from "react-icons/fa6";
 
 type ControlModalContentProps = {
   loading: boolean;
@@ -10,7 +9,7 @@ type ControlModalContentProps = {
   text: string;
   helperText: "Start" | "End" | "Closed";
   onClose?: () => void;
-  startExperience: () => void;
+  startExperience: (arg?: () => void) => void;
 };
 
 const ControlModalContent = ({
@@ -39,7 +38,7 @@ const ControlModalContent = ({
           cursor="pointer"
           color={helperText === "End" ? COLORS.red : COLORS.success}
           onClick={() => {
-            startExperience();
+            startExperience(onClose);
             // onClose();
           }}
         />

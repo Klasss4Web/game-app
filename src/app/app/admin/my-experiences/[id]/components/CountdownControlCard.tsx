@@ -28,7 +28,7 @@ const CountdownControlCard = ({
 }: CountdownControlCardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [startResponse, setStartResponse] = useState({});
-  const startExperience = () => {
+  const startExperience = (onClose?: () => void) => {
     if (experience_status === "finish")
       return errorNotifier("This experience is closed");
     setLoading(true);
@@ -36,12 +36,13 @@ const CountdownControlCard = ({
       experience_id,
     };
     experience_status === "active"
-      ? endExperience(payload, setLoading, setStartResponse)
+      ? endExperience(payload, setLoading, setStartResponse, onClose)
       : sendMessage(
           SOCKET_EVENTS.adminStartExperience,
           payload,
           setLoading,
-          setStartResponse
+          setStartResponse,
+          onClose
         );
   };
 
@@ -67,7 +68,9 @@ const CountdownControlCard = ({
           >
             <ControlModalContent
               loading={loading}
-              startExperience={startExperience}
+              startExperience={(onClose?: () => void) =>
+                startExperience(onClose)
+              }
               text={
                 experience_status === "active"
                   ? "Click the end button to end the game"

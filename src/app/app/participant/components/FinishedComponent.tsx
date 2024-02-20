@@ -13,6 +13,7 @@ import { Participants } from "@/types/experience";
 import { LoggedInParticipant } from "@/types/user";
 import {
   getLocalStorageItem,
+  getLocalStorageString,
   setLocalStorageItem,
   setLocalStorageString,
 } from "@/utils/localStorage";
@@ -39,6 +40,7 @@ const FinishedComponent = ({
   const loggedInParticipant = getLocalStorageItem<LoggedInParticipant>(
     SAVED_ITEMS.participant
   );
+  const savedStatus = getLocalStorageString("game-status");
   const removedDuplicateData = getUniqueArray(participants) || [];
   const sortedDataInDescOrder = removedDuplicateData
     ?.sort((a, b) => b.point - a.point)
@@ -64,6 +66,10 @@ const FinishedComponent = ({
         setLocalStorageItem("question", data?.result?.question);
         // restart(setTimer());
         // setLoading(false);
+      } else if (data?.display_type === "status") {
+        setResponse(data?.result?.experience_status);
+        setLocalStorageString("position", data?.result?.experience_status);
+        setLocalStorageString("game-status", data?.result?.experience_status);
       } else {
         setResponse(data?.result);
         setLocalStorageItem("question", data?.result);
@@ -82,28 +88,36 @@ const FinishedComponent = ({
       position="relative"
       overflowY="scroll"
     >
-      <Text fontSize="1rem">Game Finished.</Text>
-      <Circle
-        width="8rem"
-        height="8rem"
-        bg={COLORS.secondary}
-        position="absolute"
-        top={position ? ["-4%", "-4%", "-7%", "-7%"] : ["0%"]}
-        // zIndex={10}
-      >
-        <Text color={COLORS.white} mt={["1rem", "0", "1rem"]}>
-          {position === "show_final_rank"
-            ? getCurrentParticipantScore?.total_point
-            : getCurrentParticipantScore?.point}
-        </Text>
-        <Text color={COLORS.white}>Points</Text>
-      </Circle>
+      {position === "finish" && (
+        <Text fontSize={["1.6rem", "1.6rem", "1rem"]}>Game Finished.</Text>
+      )}
+      {position !== "finish" && (
+        <Circle
+          width="8rem"
+          height="8rem"
+          bg={COLORS.secondary}
+          position="absolute"
+          top={
+            position !== "finish"
+              ? ["-4%", "-4%", "-7%", "-7%"]
+              : ["2%", "3%", "0"]
+          }
+          // zIndex={10}
+        >
+          <Text color={COLORS.white} mt={["1rem", "0", "1rem"]}>
+            {position === "show_final_rank"
+              ? sortedDataInDescOrder?.[0]?.total_point
+              : getCurrentParticipantScore?.point}
+          </Text>
+          <Text color={COLORS.white}>Points</Text>
+        </Circle>
+      )}
       {position === "finish" && (
         <Text fontSize={["1.2rem"]}>
-          The trivia game has ended. Thank you for answering
+          The game has ended. Thank you for answering
         </Text>
       )}
-      {position && (
+      {position !== "finish" && (
         <Flex
           width="100%"
           justify="space-between"
@@ -114,7 +128,9 @@ const FinishedComponent = ({
           borderRadius=".5rem"
         >
           <Box width="30%">
-            <Text>{(getCurrentParticipantScore?.index as number) + 1}</Text>
+            <Text>
+              {(getCurrentParticipantScore?.index as number) + 1 || "--"}
+            </Text>
             <Text>Your Rank</Text>
           </Box>
           <Box
@@ -141,24 +157,53 @@ const FinishedComponent = ({
           </Box>
         </Flex>
       )}
-      <BackgroundVideo />
+      {(position === "finish" || savedStatus === "finish") && (
+        <BackgroundVideo position={position} />
+      )}
 
-      <Flex
-        direction="column"
-        width="100%"
-        justify="center"
-        padding=".9rem"
-        color={COLORS.white}
-        bg={COLORS.blue}
-        borderRadius=".5rem"
-      >
-        <Text fontSize={["1.6rem"]}>
-          {position === "show_final_rank"
-            ? "Player Rankings"
-            : "Current Question Leaders"}
-        </Text>
-        <PlayersRankingTable data={sortedDataInDescOrder} position={position} />
-      </Flex>
+      {savedStatus === "finish" && position !== "finish" && (
+        <Flex
+          direction="column"
+          width="100%"
+          justify="center"
+          padding=".9rem"
+          color={COLORS.white}
+          bg={COLORS.blue}
+          borderRadius=".5rem"
+        >
+          <Text fontSize={["1.6rem"]}>
+            Current Question Leaders
+            {/* {position === "show_final_rank"
+              ? "Player Rankings"
+              : "Current Question Leaders"} */}
+          </Text>
+          <PlayersRankingTable
+            data={sortedDataInDescOrder}
+            position={position}
+          />
+        </Flex>
+      )}
+      {savedStatus !== "finish" && position !== "finish" && (
+        <Flex
+          direction="column"
+          width="100%"
+          justify="center"
+          padding=".9rem"
+          color={COLORS.white}
+          bg={COLORS.blue}
+          borderRadius=".5rem"
+        >
+          <Text fontSize={["1.6rem"]}>
+            {position === "show_final_rank"
+              ? "Player Rankings"
+              : "Current Question Leaders"}
+          </Text>
+          <PlayersRankingTable
+            data={sortedDataInDescOrder}
+            position={position}
+          />
+        </Flex>
+      )}
     </HeroSectionWrapper>
   );
 };

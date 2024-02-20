@@ -19,6 +19,7 @@ import {
 } from "@/utils/localStorage";
 import { SOCKET_EVENTS } from "@/services/socket";
 import { LoggedInParticipant } from "@/types/user";
+import { useSearchParams } from "next/navigation";
 
 const SocketContext = createContext({});
 
@@ -33,6 +34,9 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const participant = getLocalStorageItem<LoggedInParticipant>(
     SAVED_ITEMS.participant
   );
+    const params = useSearchParams();
+
+  const experienceId = params.get("id")
 
   useEffect(() => {
     // const socketClient = token
@@ -56,6 +60,22 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     socketClient.on("connect", () => {
       console.log("CONNECTED IN REAL TIME", socketClient.active);
       successNotifier("Connection restored");
+        if (participant?.experience_id === experienceId) {
+          // const payload = {
+          //   nonce_id: participant?.nonce_id,
+          //   experience_id: participant?.experience_id,
+          // };
+          socketClient.emit(
+            SOCKET_EVENTS.rejoinExperience,
+            payload,
+            (response: any) => {
+              console.log(
+                response,
+                `EMIT RESPONSE FOR ${SOCKET_EVENTS.rejoinExperience}`
+              );
+            }
+          );
+        }
       socketClient.emit(
         SOCKET_EVENTS.rejoinExperience,
         payload,
@@ -74,11 +94,14 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     });
 
     return () => {
+       socketClient.removeAllListeners(
+         SOCKET_EVENTS.rejoinExperience
+       );
       if (socketClient) {
         socketClient.disconnect();
       }
     };
-  }, [token]);
+  }, [experienceId, participant?.experience_id, participant?.nonce_id, token]);
 
   //  const dispatch = (incoming) => {
   //    setState((prev) => ({ ...prev, ...incoming }));

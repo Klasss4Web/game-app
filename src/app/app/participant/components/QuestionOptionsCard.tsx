@@ -84,7 +84,7 @@ const QuestionOptionsCard = ({
       padding=".8rem 0 !important"
       cursor="pointer"
       _hover={{ bg: COLORS.yellow }}
-      isDisabled={!isRunning && !isAnswered}
+      isDisabled={(!isRunning && !isAnswered) || position !== "question"}
       onClick={handleSubmitAnswer}
     >
       <Flex

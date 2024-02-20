@@ -13,6 +13,7 @@ import { SAVED_ITEMS } from "@/constants/appConstants";
 import {
   getLocalStorageItem,
   getLocalStorageString,
+  removeLocalStorageItem,
 } from "@/utils/localStorage";
 import { LoggedInParticipant } from "@/types/user";
 import { errorNotifier } from "@/app/providers";
@@ -30,7 +31,7 @@ const Participant = () => {
   // const [isFinished, setIsFinished] = useState<boolean>(false);
 
   const [position, setPosition] = useState<string>("login");
-  const [playAudio, setPlayAudio] = useState(true);
+  const [muteAudio, setMuteAudio] = useState(false);
 
   const experienceId = params.get("id");
   const participant = getLocalStorageItem<LoggedInParticipant>(
@@ -58,7 +59,7 @@ const Participant = () => {
         setResponse((saveQuestions as Questions[]) || []);
       } else {
         setPosition("waiting");
-        // setPosition("");
+        // setPosition("status");
       }
       if (socketConnection && typeof socketConnection.emit === "function") {
         console.log("socketConnection", socketConnection);
@@ -107,19 +108,19 @@ const Participant = () => {
     },
     [socketConnection]
   );
-  console.log("PLAY", playAudio);
+  console.log("PLAY", muteAudio);
   useEffect(() => {
     // if (!socketConnection?.connected) {
     //   setRefresh(!refresh);
     // }
-    // const audioElement = new Audio("/audio/backgroundSound.mp3");
+    const audioElement = new Audio("/audio/backgroundSound.mp3");
 
-    // if (playAudio) {
-    //   audioElement.play();
-    //   audioElement.loop = true;
-    // } else {
-    //   audioElement.pause();
-    // }
+    if (!muteAudio) {
+      audioElement.play();
+      audioElement.loop = true;
+    } else {
+      audioElement.pause();
+    }
 
     if (participant?.experience_id === experienceId) {
       const payload = {
@@ -128,9 +129,15 @@ const Participant = () => {
       };
       console.log("REJOINED");
       reJoinExperience(payload, setRejoinData, setPosition, setLoading);
+    } else {
+      removeLocalStorageItem("participant")
     }
+    return () => {
+      audioElement.pause();
+      
+    };
   }, [
-    playAudio,
+    muteAudio,
     participant?.experience_id,
     participant?.nonce_id,
     experienceId,
@@ -195,7 +202,7 @@ const Participant = () => {
         {(position === "final_score_board" ||
           position === "show_question_rank" ||
           position === "show_final_rank" ||
-          !position) && (
+          position === "finish") && (
           <FinishedComponent
             position={position}
             participants={response as Participants[]}
@@ -223,21 +230,24 @@ const Participant = () => {
           background: "inherit",
         }}
       >
-        {!playAudio ? (
+        {!muteAudio ? (
           <GoUnmute
             size={26}
             color={COLORS.red}
             cursor="pointer"
-            onClick={() => setPlayAudio(true)}
+            onClick={() => setMuteAudio(!muteAudio)}
           />
         ) : (
           <BiVolumeMute
             size={26}
             color={COLORS.red}
             cursor="pointer"
-            onClick={() => setPlayAudio(false)}
+            onClick={() => setMuteAudio(!muteAudio)}
           />
         )}
+        {/* <button onClick={() => setMuteAudio(!muteAudio)}>
+          {muteAudio ? "Unmute" : "Mute"}
+        </button> */}
         {/* <audio controls style={{ background: "inherit" }}>
           <source src="/audio/backgroundSound.mp3" type="audio/mp3" />
         </audio> */}

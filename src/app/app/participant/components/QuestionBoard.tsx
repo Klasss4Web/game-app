@@ -82,6 +82,10 @@ const QuestionBoard = ({
         setLocalStorageItem("question", data?.result?.question);
         restart(setTimer());
         setLoading(false);
+      } else if (data?.display_type === "status") {
+        setResponse(data?.result?.experience_status);
+        setLocalStorageString("position", data?.result?.experience_status);
+        setLocalStorageString("game-status", data?.result?.experience_status);
       } else if (!data?.display_type) {
         setResponse(data?.result);
         setLocalStorageItem("question", data?.result);
@@ -221,7 +225,8 @@ const QuestionBoard = ({
           bg={COLORS.formGray}
           padding=".1rem .4rem"
         >
-          {minutes}:{seconds}
+          {position === "question" ? minutes : "0"}:
+          {position === "question" ? seconds : "00"}
         </Text>
         <Progress
           size="xs"

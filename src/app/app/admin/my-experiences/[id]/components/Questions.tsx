@@ -27,6 +27,7 @@ import useQuestionFunctions from "../hooks/useQuestionFunctions";
 import { createQuestions } from "../service";
 import { Participants } from "@/types/experience";
 import { truncateText } from "@/utils/truncateTexts";
+import { errorNotifier } from "@/app/providers";
 
 type QuestionSectionProps = {
   experience_id: string;
@@ -39,6 +40,7 @@ type QuestionSectionProps = {
     questionNo: number
   ) => void;
   participants: Participants[];
+  refetchQuestions: () => void;
 };
 
 const QuestionSection = ({
@@ -48,6 +50,7 @@ const QuestionSection = ({
   allQuestions,
   participants,
   setActiveQuestion,
+  refetchQuestions,
 }: // selectedQuestion,
 QuestionSectionProps) => {
   const [formValues, setFormValues] = useState({
@@ -69,9 +72,13 @@ QuestionSectionProps) => {
     handleAnswerFieldChange,
   } = useQuestionFunctions(setFormValues, setSliceIndex, sliceIndex);
 
+  const isCorrectOption = formValues?.answerFields?.[0]?.answers?.find(
+    (option) => option?.is_correct
+  );
+
   const handleCreate = () => {
-    //  if (!formValues?.title || !formValues?.description)
-    //    return errorNotifier("You have not entered your name and description");
+    if (!isCorrectOption)
+      return errorNotifier("Please select a correct option");
     const payload = {
       experience_id,
       question_type: "count-down-trivia",
@@ -91,6 +98,7 @@ QuestionSectionProps) => {
       console.log("data", data);
       //  onClose && onClose();
       setTabToShow("allQuestions");
+      refetchQuestions();
       setFormValues({
         answerFields: [] as AnswerFields[],
       });

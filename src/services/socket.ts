@@ -4,6 +4,7 @@ import {
   getLocalStorageItem,
   getLocalStorageString,
   setLocalStorageItem,
+  setLocalStorageString,
 } from "@/utils/localStorage";
 import { ACCESS_TOKEN, SAVED_ITEMS } from "@/constants/appConstants";
 import { errorNotifier, successNotifier } from "@/app/providers";
@@ -139,6 +140,7 @@ export async function joinExperience(
     setData(data);
     setPosition("waiting");
     setLocalStorageItem(SAVED_ITEMS.participant, data);
+    setLocalStorageString("position", "waiting");
     // socketEmitEvent(
     //   SOCKET_EVENTS.adminGetExperienceParticipants,
     //   {
@@ -146,7 +148,7 @@ export async function joinExperience(
     //   },
     //   socketClient
     // );
-    console.log("EXP RESP", data);
+    console.log("EXP RESP", data, "PAYLOAD", payload);
   });
   socketClient.on("joinExperienceError", (error: any) => {
     console.log("EXP ERROR RESP", error);
@@ -191,7 +193,8 @@ export async function sendMessage(
   name: string,
   payload: any,
   setLoading: (arg: boolean) => void,
-  setData: (arg: boolean) => void
+  setData: (arg: boolean) => void,
+  onClose?: () => void
 ) {
   setLoading(true);
   socketClient = io(socketBaseURL as string, {
@@ -211,6 +214,7 @@ export async function sendMessage(
     );
 
     setLoading(false);
+    onClose && onClose();
   });
   socketClient.on(SOCKET_EVENTS.adminStartExperienceError, (error: any) => {
     // setData(data);
@@ -226,7 +230,8 @@ export async function sendMessage(
 export async function endExperience(
   payload: any,
   setLoading: (arg: boolean) => void,
-  setData: (arg: boolean) => void
+  setData: (arg: boolean) => void,
+  onClose?: () => void
 ) {
   setLoading(true);
 
@@ -252,8 +257,8 @@ export async function endExperience(
       `EXP MSG RESP FOR ${SOCKET_EVENTS.adminEndExperienceResponse}`,
       data
     );
-
     setLoading(false);
+    onClose && onClose();
   });
   socketClient.on(SOCKET_EVENTS.adminEndExperienceError, (error: any) => {
     // setData(data);

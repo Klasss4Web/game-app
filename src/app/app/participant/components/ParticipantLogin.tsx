@@ -8,6 +8,7 @@ import { Text } from "@chakra-ui/react";
 import HeroSectionWrapper from "../../admin/my-experiences/components/HeroSectionWrapper";
 import { SOCKET_EVENTS, joinExperience } from "@/services/socket";
 import { useSocket } from "@/contexts/SocketContext";
+import { removeLocalStorageItem } from "@/utils/localStorage";
 
 type ParticipantLogin = {
   setPosition: (arg: string) => void;
@@ -15,20 +16,21 @@ type ParticipantLogin = {
 };
 
 const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
-
-  const {socketConnection} = useSocket()
+  const { socketConnection } = useSocket();
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [experienceResponse, setExperienceResponse] = useState({});
 
   const handleJoinExperience = () => {
+    removeLocalStorageItem("game-status");
+    removeLocalStorageItem("participant");
     setLoading(true);
     const payload = {
       username: userName,
       // experience_id: "bd3dcb95-220a-486d-babd-1e457075db80",
       experience_id,
     };
-    console.log("CLICKED");
+    console.log("CLICKED", payload);
     joinExperience(
       SOCKET_EVENTS.joinExperience,
       payload,
@@ -40,9 +42,7 @@ const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
     // setLoading(false);
   };
 
-  
-
-  console.log("RESP", experienceResponse);
+  console.log("RESP", experienceResponse, experience_id);
   return (
     <>
       <HeroSectionWrapper bg={COLORS.formGray}>

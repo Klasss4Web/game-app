@@ -54,10 +54,10 @@ const ExperienceDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [activeLoading, setActiveLoading] = useState(false);
   const [participants, setParticipants] = useState<Participants[]>([]);
-  const [isChecked, setIsChecked] = useState(false);
   const [activeQuestionResponse, setActiveQuestionResponse] =
     useState<Questions>({} as Questions);
   const [sliceIndex, setSliceIndex] = useState(0);
+  const [controlName, setControlName] = useState<string | null>("");
   // const [allQuestions, setAllQuestions] = useState<Questions[]>([]);
 
   const { seconds, minutes, isRunning, resume, restart, pause } = useTimer({
@@ -73,12 +73,16 @@ const ExperienceDashboard = () => {
     enabled: !!params?.id,
   });
 
-  const { data: allQuestions, isLoading: isLoadingQuestions } = useQuery<{
+  const {
+    data: allQuestions,
+    isLoading: isLoadingQuestions,
+    refetch: refetchQuestions,
+  } = useQuery<{
     data: Questions[];
   }>({
     queryKey: ["all-questions"],
     queryFn: () => getAllQuestions(params?.id as string),
-    retry: 3,
+    // retry: 3,
     enabled: !!params?.id,
   });
   console.log("allQuest----", allQuestions);
@@ -100,8 +104,6 @@ const ExperienceDashboard = () => {
     );
     setSliceIndex(questNo);
   };
-
-  const [controlName, setControlName] = useState<string | null>("");
 
   const handleViewersControl = (
     switchName: string | null,
@@ -167,7 +169,7 @@ const ExperienceDashboard = () => {
         const audioElement = new Audio("/audio/notification1.wav");
         audioElement.play();
         const removeDuplicateData = getUniqueArray(data);
-        setParticipants(removeDuplicateData);
+        setParticipants(removeDuplicateData as Participants[]);
         console.log(
           `PARTICIPANTS MSG RESP FOR ${SOCKET_EVENTS.getExperienceParticipantResponse}`,
           removeDuplicateData
@@ -216,7 +218,7 @@ const ExperienceDashboard = () => {
     params?.id,
     participants?.length,
     socketConnection,
-    // socketConnection?.connected,
+    specificExperience?.data?.experience_status,
   ]);
 
   const participantsWhoAnsweredQuest = participants?.filter(
@@ -338,10 +340,11 @@ const ExperienceDashboard = () => {
                 isChecked={controlName === "correct-answer"}
                 value="correct-answer"
                 onChange={
-                  (e) => {
-                    // setControlName(
-                    //   "correct-answer" === controlName ? null : "correct-answer"
-                    // );
+                  () => {
+                    if (
+                      specificExperience?.data?.experience_status === "initial"
+                    )
+                      return errorNotifier("You have not started the game yet");
                     handleViewersControl(
                       "correct-answer",
                       SOCKET_EVENTS.adminShowCorrectAnswer,
@@ -442,20 +445,36 @@ const ExperienceDashboard = () => {
               alignItems="center"
               width="25%"
             >
-              <Switch id="question-notes" size="lg" />
+              <Switch
+                id="show-winner"
+                size="lg"
+                isChecked={controlName === "show-winner"}
+                value="show-winner"
+                onChange={(e) => {
+                  if (specificExperience?.data?.experience_status !== "finish")
+                    return errorNotifier("Please end the game to see winner");
+                  handleViewersControl(
+                    "show-winner",
+                    SOCKET_EVENTS.adminShowFinalRank,
+                    SOCKET_EVENTS.showFinalRankResponse,
+                    SOCKET_EVENTS.showFinalRankError,
+                    setParticipants
+                  );
+                }}
+              />
               <FormLabel
-                htmlFor="question-notes"
+                htmlFor="show-winner"
                 mb="0"
                 fontSize=".7rem"
                 textAlign="center"
               >
-                Show Question Notes
+                Show Winner
               </FormLabel>
             </FormControl>
           </Flex>
         </GameControlExperienceCard>
         <StatsCard
-          totalParticipants={getUniqueArray(participants)?.length}
+          totalParticipants={getUniqueArray(participants)?.length as number}
           experience={specificExperience?.data}
           participantsWhoAnsweredQuest={participantsWhoAnsweredQuest?.length}
         />
@@ -466,8 +485,9 @@ const ExperienceDashboard = () => {
         allQuestions={(allQuestions?.data as Questions[]) || []}
         setSliceIndex={setSliceIndex}
         sliceIndex={sliceIndex}
-        participants={getUniqueArray(participants)}
+        participants={getUniqueArray(participants) as Participants[]}
         setActiveQuestion={handleSetActiveQuestion}
+        refetchQuestions={refetchQuestions}
       />
     </Box>
   );
