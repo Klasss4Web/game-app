@@ -16,7 +16,7 @@ const MyExeperiences = () => {
   const { data: myExperiences, isLoading } = useQuery({
     queryKey: ["experiences"],
     queryFn: getExperience,
-    retry: 3,
+    // retry: 3,
   });
 
   // console.log("myExperiences", myExperiences);

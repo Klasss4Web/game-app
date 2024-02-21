@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 
 type BackgroundVideoProps = {
   position: String;
+  url: string;
 };
 
-const BackgroundVideo = ({ position }: BackgroundVideoProps) => {
+const BackgroundVideo = ({ position, url }: BackgroundVideoProps) => {
   const savedStatus = getLocalStorageString("game-status");
 
   const [muted, setMuted] = useState(false);
@@ -21,28 +22,23 @@ const BackgroundVideo = ({ position }: BackgroundVideoProps) => {
     }
     return () => {
       audioElement.pause();
+      // audioElement.remove();
     };
-  }, [muted, position]);
+  }, [muted, position, url]);
 
   const toggleMuted = () => {
     setMuted(!muted);
   };
 
-  console.log("POSIT", position);
+  console.log("POSIT", position, url);
 
   return (
     <Box className="video-container">
-      {position === "show_final_rank" ? (
-        <video autoPlay loop muted>
-          <source src={"/videos/cup-winner.webm"} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <video autoPlay loop muted>
-          <source src={"/videos/game-ended.webm"} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      )}
+      {/* {position === "show_final_rank" ? ( */}
+      <video autoPlay loop muted>
+        <source src={url} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <button onClick={toggleMuted}>
         {muted ? "Cheer the winner" : "Stop Cheering"}
       </button>

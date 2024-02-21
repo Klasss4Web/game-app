@@ -127,7 +127,13 @@ const FinishedComponent = ({
           borderRadius=".5rem"
         >
           <Box width="30%">
-            <Text>
+            <Text
+              mt={
+                position === "show_final_rank" && savedStatus === "finish"
+                  ? ["", "", "1.5rem"]
+                  : [""]
+              }
+            >
               {(getCurrentParticipantScore?.index as number) + 1 || "--"}
             </Text>
             <Text>Your Rank</Text>
@@ -151,13 +157,24 @@ const FinishedComponent = ({
             )}
           </Box>
           <Box width="30%">
-            <Text>{sortedDataInDescOrder?.length}</Text>
+            <Text
+              mt={
+                position === "show_final_rank" && savedStatus === "finish"
+                  ? ["", "", "1.5rem"]
+                  : [""]
+              }
+            >
+              {sortedDataInDescOrder?.length}
+            </Text>
             <Text>Participants</Text>
           </Box>
         </Flex>
       )}
-      {(position === "finish" || savedStatus === "finish") && (
-        <BackgroundVideo position={position} />
+      {savedStatus === "finish" && position === "finish" && (
+        <BackgroundVideo position={position} url={"/videos/game-ended.webm"} />
+      )}
+      {savedStatus === "finish" && position === "show_final_rank" && (
+        <BackgroundVideo position={position} url={"/videos/cup-winner.webm"} />
       )}
 
       {savedStatus === "finish" && position !== "finish" && (

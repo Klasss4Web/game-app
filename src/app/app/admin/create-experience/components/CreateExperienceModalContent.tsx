@@ -45,7 +45,7 @@ const CreateExperienceModalContent = ({
     mutationKey: ["specificExperience"],
     onSuccess: (data) => {
       console.log("data", data);
-      queryClient.invalidateQueries({ queryKey: ["getRequest"] });
+      queryClient.invalidateQueries({ queryKey: ["experiences"] });
       router.push(ROUTES.my_experience);
       onClose && onClose();
     },

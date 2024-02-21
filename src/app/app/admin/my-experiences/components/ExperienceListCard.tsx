@@ -13,7 +13,7 @@ import Circle from "@/components/common/Circle";
 import { ExperienceData } from "@/types/experience";
 import { formatDate } from "@/utils/dateFormat";
 import { ROUTES } from "@/constants/pageRoutes";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { deleteExperience } from "../service";
 import CautionAlertDialog from "@/components/common/CautionAlertDialog";
 
@@ -29,10 +29,13 @@ const ExperienceListCard = ({ experience, index }: ExperienceListCardProps) => {
     mutate();
   };
 
+  const queryClient = new QueryClient();
+
   const { mutate, isLoading } = useMutation({
     mutationFn: () => deleteExperience(experience?.id as string),
-    mutationKey: ["experiences"],
+    mutationKey: ["delete-experience"],
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["experiences"] });
       console.log("data", data);
       // router.push(ROUTES.my_experience);
       // onClose && onClose();
