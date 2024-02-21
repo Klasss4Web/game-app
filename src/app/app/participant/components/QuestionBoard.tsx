@@ -92,7 +92,9 @@ const QuestionBoard = ({
         setLocalStorageItem("question", data?.result);
         pause();
       } else {
+        setPosition(data?.display_type);
         setResponse(data?.result);
+        setLocalStorageString("position", data?.display_type);
         pause();
       }
     });
