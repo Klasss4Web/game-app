@@ -59,18 +59,21 @@ const FinishedComponent = ({
         `EXP MSG RESP FOR ${SOCKET_EVENTS.experienceReactivity}`,
         data
       );
-      setPosition(data?.display_type);
-      setLocalStorageString("position", data?.display_type);
+      // setPosition(data?.display_type);
+      // setLocalStorageString("position", data?.display_type);
       if (data?.display_type === "question") {
         setResponse(data?.result?.question);
         setLocalStorageItem("question", data?.result?.question);
         // restart(setTimer());
         // setLoading(false);
       } else if (data?.display_type === "status") {
+        setPosition(data?.result?.experience_status);
         setResponse(data?.result?.experience_status);
         setLocalStorageString("position", data?.result?.experience_status);
         setLocalStorageString("game-status", data?.result?.experience_status);
       } else {
+        setPosition(data?.display_type);
+        setLocalStorageString("position", data?.display_type);
         setResponse(data?.result);
         setLocalStorageItem("question", data?.result);
       }
@@ -79,7 +82,7 @@ const FinishedComponent = ({
     return () => {
       socketConnection.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
     };
-  }, [setResponse, setPosition, socketConnection]);
+  }, [setResponse, setPosition, socketConnection, position]);
   return (
     <HeroSectionWrapper
       bg={COLORS.formGray}
@@ -97,11 +100,7 @@ const FinishedComponent = ({
           height="8rem"
           bg={COLORS.secondary}
           position="absolute"
-          top={
-            position !== "finish"
-              ? ["-4%", "-4%", "-7%", "-7%"]
-              : ["2%", "3%", "0"]
-          }
+          top={["1%", "1%", "0%", "0%"]}
           // zIndex={10}
         >
           <Text color={COLORS.white} mt={["1rem", "0", "1rem"]}>
@@ -171,12 +170,7 @@ const FinishedComponent = ({
           bg={COLORS.blue}
           borderRadius=".5rem"
         >
-          <Text fontSize={["1.6rem"]}>
-            Current Question Leaders
-            {/* {position === "show_final_rank"
-              ? "Player Rankings"
-              : "Current Question Leaders"} */}
-          </Text>
+          <Text fontSize={["1.6rem"]}>Player Rankings</Text>
           <PlayersRankingTable
             data={sortedDataInDescOrder}
             position={position}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { COLORS } from "@/constants/colors";
 import FinishedComponent from "./components/FinishedComponent";
@@ -34,6 +34,7 @@ const Participant = () => {
   const [muteAudio, setMuteAudio] = useState(false);
 
   const experienceId = params.get("id");
+  const savedStatus = getLocalStorageString("game-status");
   const participant = getLocalStorageItem<LoggedInParticipant>(
     SAVED_ITEMS.participant
   );
@@ -130,11 +131,10 @@ const Participant = () => {
       console.log("REJOINED");
       reJoinExperience(payload, setRejoinData, setPosition, setLoading);
     } else {
-      removeLocalStorageItem("participant")
+      removeLocalStorageItem("participant");
     }
     return () => {
       audioElement.pause();
-      
     };
   }, [
     muteAudio,
@@ -148,6 +148,7 @@ const Participant = () => {
 
   console.log("START RESPONSE", response, "POSITION", position, rejoinData);
 
+  const responseAsParticipants = response as Participants[];
   return !isMounted ? (
     <FullPageLoader />
   ) : (
@@ -161,7 +162,7 @@ const Participant = () => {
       position="relative"
     >
       <Box position="absolute" right="3%" top="2%">
-        <Text color={COLORS.white} fontSize="1.6rem">
+        <Text color={COLORS.white} fontSize={["1rem", "1rem", "1.6rem"]}>
           {participant?.username}
         </Text>
       </Box>
@@ -171,20 +172,27 @@ const Participant = () => {
         justify="center"
         align="center"
       >
-        {position && (
+        {/* {position && ( */}
           <>
             <Image
-              src="/images/loginBg.jpg"
-              width={150}
-              height={150}
+              src={"/images/loginBg.jpg"}
+              width={["80px", "80px", 120]}
+              height={["80px", "80px", 120]}
               borderRadius="50%"
-              alt=""
+              alt="Genius logo"
             />
+            {savedStatus === "finish" && position === "show_final_rank" && (
+              <Heading color={COLORS.success}>
+                {responseAsParticipants?.[0]?.username as string}
+              </Heading>
+            )}
             <Heading color={COLORS.white} fontWeight="normal">
-              Genius Game
+              {savedStatus === "finish" && position === "show_final_rank"
+                ? "Winner!!!"
+                : "Genius Game"}
             </Heading>
           </>
-        )}
+        {/* )} */}
         {(position === "waiting" || position === "active") && (
           <WaitingToStart
             setPosition={setPosition}

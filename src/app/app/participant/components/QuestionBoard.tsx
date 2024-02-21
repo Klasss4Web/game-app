@@ -84,6 +84,7 @@ const QuestionBoard = ({
         setLoading(false);
       } else if (data?.display_type === "status") {
         setResponse(data?.result?.experience_status);
+        setPosition(data?.result?.experience_status);
         setLocalStorageString("position", data?.result?.experience_status);
         setLocalStorageString("game-status", data?.result?.experience_status);
       } else if (!data?.display_type) {
