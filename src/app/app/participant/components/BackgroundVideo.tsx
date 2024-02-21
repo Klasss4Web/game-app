@@ -1,4 +1,3 @@
-import { getLocalStorageString } from "@/utils/localStorage";
 import { Box } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
@@ -8,7 +7,6 @@ type BackgroundVideoProps = {
 };
 
 const BackgroundVideo = ({ position, url }: BackgroundVideoProps) => {
-  const savedStatus = getLocalStorageString("game-status");
 
   const [muted, setMuted] = useState(false);
   useEffect(() => {
@@ -29,8 +27,6 @@ const BackgroundVideo = ({ position, url }: BackgroundVideoProps) => {
   const toggleMuted = () => {
     setMuted(!muted);
   };
-
-  console.log("POSIT", position, url);
 
   return (
     <Box className="video-container">
