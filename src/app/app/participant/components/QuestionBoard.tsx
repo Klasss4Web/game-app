@@ -266,7 +266,7 @@ const QuestionBoard = ({
           {answerResponse?.point} Points
         </Text>
       </Flex>
-      {!isAnswered && !isRunning && (
+      {!isAnswered && !isRunning && countDown === 0 && (
         <Text
           fontSize="1.2rem"
           color={selectedBtnId ? COLORS.headerGreen : COLORS.red}
