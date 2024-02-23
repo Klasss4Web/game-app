@@ -14,9 +14,10 @@ type QuestionOptionsCardProps = {
   position: string;
   isRunning: boolean;
   isCorrect: boolean;
+  countDown: number;
   flashCount: number;
   isAnswered: boolean;
-  selectedBtnId: string;
+  selectedBtnId: string | null;
   answerResponse: AnswerQuestionResponse;
   // setSelectedBtnId: (arg: number) => void;
   handleSubmitAnswer: MouseEventHandler<HTMLButtonElement>;
@@ -27,6 +28,7 @@ const QuestionOptionsCard = ({
   index,
   option,
   position,
+  countDown,
   isCorrect,
   isRunning,
   isAnswered,
@@ -61,7 +63,7 @@ const QuestionOptionsCard = ({
       break;
   }
 
-  console.log("optionTag", optionTag, index);
+  console.log("optionTag", optionTag, index, selectedBtnId, id, position);
   return (
     <Button
       // className={
@@ -72,7 +74,7 @@ const QuestionOptionsCard = ({
       width="100%"
       mb=".5rem"
       bg={
-        selectedBtnId === id && position === "question"
+        parseInt(selectedBtnId as string) === id && position === "question"
           ? COLORS.yellow
           : isCorrect && position !== "question"
           ? COLORS.success
@@ -84,7 +86,11 @@ const QuestionOptionsCard = ({
       padding=".8rem 0 !important"
       cursor="pointer"
       _hover={{ bg: COLORS.yellow }}
-      isDisabled={(!isRunning && !isAnswered) || position !== "question"}
+      isDisabled={
+        (!isRunning && !isAnswered && countDown === 0) ||
+        position !== "question" ||
+        (position === "question" && countDown === 0)
+      }
       onClick={handleSubmitAnswer}
     >
       <Flex

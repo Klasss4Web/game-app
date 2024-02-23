@@ -4,13 +4,19 @@ import { ExperienceData } from "@/types/experience";
 
 type ExperienceListProps = {
   data: ExperienceData[];
+  refecthExperiences: () => void;
 };
 
-const ExperienceList = ({ data }: ExperienceListProps) => {
+const ExperienceList = ({ data, refecthExperiences }: ExperienceListProps) => {
   return (
     <>
       {data?.map((exp, index) => (
-        <ExperienceListCard key={exp?.id} experience={exp} index={index} />
+        <ExperienceListCard
+          key={exp?.id}
+          experience={exp}
+          index={index}
+          refecthExperiences={refecthExperiences}
+        />
       ))}
     </>
   );

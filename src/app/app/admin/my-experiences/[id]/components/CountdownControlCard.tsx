@@ -58,8 +58,11 @@ const CountdownControlCard = ({
         height="4rem"
         borderRadius="50%"
       >
-        {isFinished ? (
-          <TfiReload size={40} cursor="pointer" />
+        {experience_status === "finish" ? (
+          <>
+            <TfiReload size={40} cursor="pointer" />
+            <Text>This experience has ended</Text>
+          </>
         ) : (
           <CustomModal
             div

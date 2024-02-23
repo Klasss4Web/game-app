@@ -22,6 +22,7 @@ import { errorNotifier, successNotifier } from "@/app/providers";
 import { formatToIsoDate } from "@/utils/dateFormat";
 import { useSocket } from "@/contexts/SocketContext";
 import {
+  getLocalStorageString,
   setLocalStorageItem,
   setLocalStorageString,
 } from "@/utils/localStorage";
@@ -29,17 +30,21 @@ import {
 type QuestionsProps = {
   questions: Questions;
   position: string;
+  countDown: number;
   experience_id: string;
   setResponse: (arg: Questions) => void;
   setPosition: (arg: string) => void;
+  setCountDown: (arg: number) => void;
 };
 
 const QuestionBoard = ({
   questions,
   position,
+  countDown,
   experience_id,
   setResponse,
   setPosition,
+  setCountDown,
 }: QuestionsProps) => {
   const { socketConnection } = useSocket();
   const { seconds, minutes, isRunning, resume, restart, pause } = useTimer({
@@ -48,10 +53,12 @@ const QuestionBoard = ({
     onExpire: () => console.warn("onExpire called"),
   });
 
+  const getSavedOption = getLocalStorageString("selectedAnswer");
+
   const [isAnswered, setIsAnswered] = useState(false);
   const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [selectedBtnId, setSelectedBtnId] = useState("");
+  const [selectedBtnId, setSelectedBtnId] = useState(getSavedOption);
   const [answerResponse, setAnswerResponse] = useState<AnswerQuestionResponse>(
     {} as AnswerQuestionResponse
   );
@@ -62,7 +69,12 @@ const QuestionBoard = ({
     setTimeout(() => setFlashCount(0), 3000); // Reset flash count after 3 seconds
   };
 
-  console.log("socketConnection SUBMIT", socketConnection);
+  console.log(
+    "socketConnection SUBMIT",
+    socketConnection,
+    "COUNTDOWN",
+    countDown
+  );
 
   useEffect(() => {
     setLoading(false);
@@ -80,6 +92,7 @@ const QuestionBoard = ({
       if (data?.display_type === "question") {
         setResponse(data?.result?.question);
         setLocalStorageItem("question", data?.result?.question);
+        setCountDown(10);
         restart(setTimer());
         setLoading(false);
       } else if (data?.display_type === "status") {
@@ -110,13 +123,15 @@ const QuestionBoard = ({
       socketConnection.removeAllListeners(SOCKET_EVENTS.experienceReactivity);
     };
   }, [
+    countDown,
     setResponse,
     setPosition,
     restart,
     pause,
-    questions?.id,
+    questions.id,
     selectedBtnId,
     socketConnection,
+    setCountDown,
   ]);
 
   function answerExperienceQuestions(
@@ -180,6 +195,7 @@ const QuestionBoard = ({
       question_answered_at: formatToIsoDate(),
     };
     setSelectedBtnId(answer_id);
+    setLocalStorageString("selectedAnswer", answer_id);
     console.log("PAYLOAD", payload, questions);
     answerExperienceQuestions(payload, setBtnLoading);
     pause();
@@ -228,8 +244,8 @@ const QuestionBoard = ({
           bg={COLORS.formGray}
           padding=".1rem .4rem"
         >
-          {position === "question" ? minutes : "0"}:
-          {position === "question" ? seconds : "00"}
+          {position === "question" && countDown > 0 ? minutes : "0"}:
+          {position === "question" && countDown > 0 ? seconds : "00"}
         </Text>
         <Progress
           size="xs"
@@ -277,6 +293,7 @@ const QuestionBoard = ({
           answerResponse={answerResponse}
           position={position}
           isCorrect={opt?.is_correct}
+          countDown={countDown}
           // setSelectedBtnId={() => setSelectedBtnId(opt?.id)}
           handleSubmitAnswer={() => handleSubmitAnswer(opt?.id)}
         />

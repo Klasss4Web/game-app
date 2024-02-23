@@ -225,13 +225,20 @@ const ExperienceDashboard = () => {
     (participant) => participant?.is_question_answered
   );
 
+   const activeQuestion = allQuestions?.data?.find(
+     (question) => question?.id === specificExperience?.data?.active_questions
+   );
   console.log(
     "PARTICIPANTS",
     participants,
+    "EXPERIENCES",
     specificExperience,
     "participantsWhoAnsweredQuest",
-    participantsWhoAnsweredQuest
+    participantsWhoAnsweredQuest,
+    activeQuestion,
   );
+
+ 
 
   // const { data: questions, isLoadingQuestions } = useQuery({
   //   queryKey: ["questions"],

@@ -24,6 +24,7 @@ const ParticipantLogin = ({ setPosition, experience_id }: ParticipantLogin) => {
   const handleJoinExperience = () => {
     removeLocalStorageItem("game-status");
     removeLocalStorageItem("participant");
+    removeLocalStorageItem("selectedAnswer");
     setLoading(true);
     const payload = {
       username: userName,

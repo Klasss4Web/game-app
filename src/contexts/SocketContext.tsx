@@ -52,30 +52,28 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         authorization: token ? `Bearer ${token}` : "",
       },
     });
-    const payload = {
-      nonce_id: participant?.nonce_id,
-      experience_id: participant?.experience_id,
-    };
+    
     setSocketConnection(socketClient as any);
     socketClient.on("connect", () => {
       console.log("CONNECTED IN REAL TIME", socketClient.active);
       successNotifier("Connection restored");
-        if (participant?.experience_id === experienceId) {
-          // const payload = {
-          //   nonce_id: participant?.nonce_id,
-          //   experience_id: participant?.experience_id,
-          // };
-          socketClient.emit(
-            SOCKET_EVENTS.rejoinExperience,
-            payload,
-            (response: any) => {
-              console.log(
-                response,
-                `EMIT RESPONSE FOR ${SOCKET_EVENTS.rejoinExperience}`
-              );
-            }
-          );
-        }
+        // if (participant?.experience_id === experienceId) {
+        
+        //   socketClient.emit(
+        //     SOCKET_EVENTS.rejoinExperience,
+        //     payload,
+        //     (response: any) => {
+        //       console.log(
+        //         response,
+        //         `EMIT RESPONSE FOR ${SOCKET_EVENTS.rejoinExperience}`
+        //       );
+        //     }
+        //   );
+        // }
+        const payload = {
+          nonce_id: participant?.nonce_id,
+          experience_id: participant?.experience_id,
+        };
       socketClient.emit(
         SOCKET_EVENTS.rejoinExperience,
         payload,

@@ -32,7 +32,7 @@ const Participant = () => {
 
   const [position, setPosition] = useState<string>("login");
   const [muteAudio, setMuteAudio] = useState(false);
-
+  const [countDown, setCountDown] = useState(10);
   const experienceId = params.get("id");
   const savedStatus = getLocalStorageString("game-status");
   const participant = getLocalStorageItem<LoggedInParticipant>(
@@ -55,6 +55,7 @@ const Participant = () => {
     ) => {
       const savedPosition = getLocalStorageString("position");
       const saveQuestions = getLocalStorageItem("question");
+
       if (position) {
         setPosition(savedPosition as string);
         setResponse((saveQuestions as Questions[]) || []);
@@ -124,6 +125,7 @@ const Participant = () => {
     }
 
     if (participant?.experience_id === experienceId) {
+      setCountDown(0);
       const payload = {
         nonce_id: participant?.nonce_id,
         experience_id: participant?.experience_id,
@@ -173,25 +175,25 @@ const Participant = () => {
         align="center"
       >
         {/* {position && ( */}
-          <>
-            <Image
-              src={"/images/loginBg.jpg"}
-              width={["80px", "80px", 120]}
-              height={["80px", "80px", 120]}
-              borderRadius="50%"
-              alt="Genius logo"
-            />
-            {savedStatus === "finish" && position === "show_final_rank" && (
-              <Heading color={COLORS.success}>
-                {responseAsParticipants?.[0]?.username as string}
-              </Heading>
-            )}
-            <Heading color={COLORS.white} fontWeight="normal">
-              {savedStatus === "finish" && position === "show_final_rank"
-                ? "Winner!!!"
-                : "Genius Game"}
+        <>
+          <Image
+            src={"/images/loginBg.jpg"}
+            width={["80px", "80px", 120]}
+            height={["80px", "80px", 120]}
+            borderRadius="50%"
+            alt="Genius logo"
+          />
+          {savedStatus === "finish" && position === "show_final_rank" && (
+            <Heading color={COLORS.success}>
+              {responseAsParticipants?.[0]?.username as string}
             </Heading>
-          </>
+          )}
+          <Heading color={COLORS.white} fontWeight="normal">
+            {savedStatus === "finish" && position === "show_final_rank"
+              ? "Winner!!!"
+              : "Genius Game"}
+          </Heading>
+        </>
         {/* )} */}
         {(position === "waiting" || position === "active") && (
           <WaitingToStart
@@ -227,6 +229,8 @@ const Participant = () => {
             experience_id={experienceId as string}
             setResponse={setResponse}
             setPosition={setPosition}
+            setCountDown={setCountDown}
+            countDown={countDown}
           />
         )}
       </Flex>

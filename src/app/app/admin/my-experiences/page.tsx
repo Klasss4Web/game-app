@@ -13,7 +13,7 @@ import ExperienceHeroCard from "./components/ExperienceHeroCard";
 import ExperienceList from "./components/ExperienceList";
 
 const MyExeperiences = () => {
-  const { data: myExperiences, isLoading } = useQuery({
+  const { data: myExperiences, isLoading, refetch: refecthExperiences } = useQuery({
     queryKey: ["experiences"],
     queryFn: getExperience,
     // retry: 3,
@@ -27,7 +27,10 @@ const MyExeperiences = () => {
       <PageTitle title="My Experiences" />
       {myExperiences?.data.length < 1 && <ExperienceHeroCard />}
       {myExperiences?.data.length > 0 && (
-        <ExperienceList data={myExperiences?.data} />
+        <ExperienceList
+          data={myExperiences?.data}
+          refecthExperiences={refecthExperiences}
+        />
       )}
     </Box>
   );

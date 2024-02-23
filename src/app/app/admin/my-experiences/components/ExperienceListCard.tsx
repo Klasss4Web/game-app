@@ -20,9 +20,14 @@ import CautionAlertDialog from "@/components/common/CautionAlertDialog";
 type ExperienceListCardProps = {
   index: number;
   experience: ExperienceData;
+  refecthExperiences: () => void;
 };
 
-const ExperienceListCard = ({ experience, index }: ExperienceListCardProps) => {
+const ExperienceListCard = ({
+  experience,
+  refecthExperiences,
+  index,
+}: ExperienceListCardProps) => {
   const router = useRouter();
 
   const handleDelete = () => {
@@ -35,6 +40,7 @@ const ExperienceListCard = ({ experience, index }: ExperienceListCardProps) => {
     mutationFn: () => deleteExperience(experience?.id as string),
     mutationKey: ["delete-experience"],
     onSuccess: (data) => {
+      refecthExperiences();
       queryClient.invalidateQueries({ queryKey: ["experiences"] });
       console.log("data", data);
       // router.push(ROUTES.my_experience);
