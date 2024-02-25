@@ -17,9 +17,11 @@ import AuthContextProvider from "@/contexts/AuthContext";
 import { socketBaseURL } from "@/services/api";
 import { errorNotifier, successNotifier } from "@/app/providers";
 import { io } from "socket.io-client";
+import { useGetState } from "@/contexts/useGetState";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const userId = "dummy id";
+
   const isMounted = useIsMounted();
   const loggedinUser = getLocalStorageItem(LOGGED_IN_USER) as AuthUserType;
   // console.log("loggedinUserrrr", loggedinUser);
