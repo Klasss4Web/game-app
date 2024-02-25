@@ -82,7 +82,7 @@ const ExperienceDashboard = () => {
   }>({
     queryKey: ["all-questions"],
     queryFn: () => getAllQuestions(params?.id as string),
-    // retry: 3,
+    retry: 3,
     enabled: !!params?.id,
   });
   console.log("allQuest----", allQuestions);

@@ -219,12 +219,12 @@
 
 @keyframes flashAnimation {
   0%, 50% {
-    background-color: #007bff; /* Initial and middle color */
+    background-color: #007bff !important; /* Initial and middle color */
   }
   25%, 75% {
-    background-color: #ff0000; /* Flashing color */
+    background-color: #ff0000 !important; /* Flashing color */
   }
   100% {
-    background-color: #007bff; /* Final color */
+    background-color: #007bff !important; /* Final color */
   }
 }

@@ -144,11 +144,18 @@ const Participant = () => {
     participant?.nonce_id,
     experienceId,
     reJoinExperience,
-    // socketConnection?.connected,
+    socketConnection?.connected,
     // position,
   ]);
 
-  console.log("START RESPONSE", response, "POSITION", position, rejoinData);
+  console.log(
+    "START RESPONSE",
+    response,
+    "POSITION",
+    position,
+    rejoinData,
+    socketConnection?.connected
+  );
 
   const responseAsParticipants = response as Participants[];
   return !isMounted ? (
@@ -163,9 +170,12 @@ const Participant = () => {
       // overflowY="scroll"
       position="relative"
     >
-      <Box position="absolute" right="3%" top="2%">
+      <Box position="absolute" right="3%" top="1%" textAlign="right">
         <Text color={COLORS.white} fontSize={["1rem", "1rem", "1.6rem"]}>
           {participant?.username}
+        </Text>
+        <Text color={socketConnection?.connected ? COLORS.success : COLORS.red}>
+          {socketConnection?.connected ? "Connected" : "Not Connected"}
         </Text>
       </Box>
       <Flex

@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
 type BackgroundVideoProps = {
@@ -7,7 +7,6 @@ type BackgroundVideoProps = {
 };
 
 const BackgroundVideo = ({ position, url }: BackgroundVideoProps) => {
-
   const [muted, setMuted] = useState(false);
   useEffect(() => {
     const audioElement = new Audio("/audio/cheers.wav");
@@ -29,12 +28,19 @@ const BackgroundVideo = ({ position, url }: BackgroundVideoProps) => {
   };
 
   return (
-    <Box className="video-container">
-      {/* {position === "show_final_rank" ? ( */}
+    <Box className="video-container" pos="relative">
       <video autoPlay loop muted>
         <source src={url} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+      <Image
+        pos="absolute"
+        top="0"
+        src="/images/clap.gif"
+        width="2rem"
+        height="2rem"
+        alt="clapping hands"
+      />
       <button onClick={toggleMuted}>
         {muted ? "Cheer the winner" : "Stop Cheering"}
       </button>

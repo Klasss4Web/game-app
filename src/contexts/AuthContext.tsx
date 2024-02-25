@@ -52,7 +52,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       setLoggedinUser(null);
-      router.push(ROUTES.home);
+      router.push(ROUTES.login);
     }
     // eslint-disable-next-line
   }, []);
