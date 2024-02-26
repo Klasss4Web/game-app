@@ -66,11 +66,11 @@ const QuestionOptionsCard = ({
   console.log("optionTag", optionTag, index, selectedBtnId, id, position);
   return (
     <Button
-      className={
-        answerResponse.is_answer_correct
-          ? `flashing-button ${flashCount > 0 ? "flashing" : ""}`
-          : ""
-      }
+      // className={
+      //   answerResponse.is_answer_correct
+      //     ? `flashing-button ${flashCount > 0 ? "flashing" : ""}`
+      //     : ""
+      // }
       width="100%"
       mb=".5rem"
       bg={

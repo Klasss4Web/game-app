@@ -19,18 +19,18 @@ export const stats: Stats[] = [
     statLabel: "QUESTIONS",
     key: "no_of_questions",
   },
-  {
-    id: "3",
-    icon: FaCheck,
-    statNumber: "1",
-    statLabel: "ANSWERS",
-    key: "no_of_answers",
-  },
-  {
-    id: "4",
-    icon: FaRegCheckCircle,
-    statNumber: "1",
-    statLabel: "Q1 ANSWERS",
-    key: "no_of_correct_answers",
-  },
+  // {
+  //   id: "3",
+  //   icon: FaCheck,
+  //   statNumber: "1",
+  //   statLabel: "ANSWERS",
+  //   key: "no_of_answers",
+  // },
+  // {
+  //   id: "4",
+  //   icon: FaRegCheckCircle,
+  //   statNumber: "1",
+  //   statLabel: "Q1 ANSWERS",
+  //   key: "no_of_correct_answers",
+  // },
 ];
