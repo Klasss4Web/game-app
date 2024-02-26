@@ -107,7 +107,6 @@ const ExperienceDashboard = () => {
   };
 
   const handleViewersControl = (
-    e,
     switchName: string | null,
     eventName: string,
     reponseName: string,
@@ -360,7 +359,6 @@ const ExperienceDashboard = () => {
                     )
                       return errorNotifier("You have not started the game yet");
                     handleViewersControl(
-                      e,
                       "correct-answer",
                       SOCKET_EVENTS.adminShowCorrectAnswer,
                       SOCKET_EVENTS.showCorrectAnswerResponse,
@@ -403,7 +401,6 @@ const ExperienceDashboard = () => {
                   //     : "question-ranking"
                   // );
                   handleViewersControl(
-                    e,
                     "question-ranking",
                     SOCKET_EVENTS.adminShowQuestionRank,
                     SOCKET_EVENTS.showQuestionRankResponse,
@@ -438,7 +435,6 @@ const ExperienceDashboard = () => {
                   //   "leader-board" === controlName ? null : "leader-board"
                   // );
                   handleViewersControl(
-                    e,
                     "leader-board",
                     SOCKET_EVENTS.adminShowFinalRank,
                     SOCKET_EVENTS.showFinalRankResponse,
@@ -471,7 +467,6 @@ const ExperienceDashboard = () => {
                   if (specificExperience?.data?.experience_status !== "finish")
                     return errorNotifier("Please end the game to see winner");
                   handleViewersControl(
-                    e,
                     "show-winner",
                     SOCKET_EVENTS.adminShowFinalRank,
                     SOCKET_EVENTS.showFinalRankResponse,
