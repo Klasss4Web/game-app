@@ -37,8 +37,8 @@ const BackgroundVideo = ({ position, url }: BackgroundVideoProps) => {
         pos="absolute"
         top="0"
         src="/images/clap.gif"
-        width="2rem"
-        height="2rem"
+        width={["2rem", "2rem", "3rem"]}
+        height={["2rem", "2rem", "3rem"]}
         alt="clapping hands"
       />
       <button onClick={toggleMuted}>

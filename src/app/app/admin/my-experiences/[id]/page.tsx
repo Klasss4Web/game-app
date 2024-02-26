@@ -86,7 +86,7 @@ const ExperienceDashboard = () => {
     retry: 3,
     enabled: !!params?.id,
   });
-  console.log("allQuest----", allQuestions);
+  console.log("allQuest----", allQuestions, "startResponse", startResponse);
   const handleSetActiveQuestion = (
     payload: ActiveQuestionPayload,
     questNo: number
@@ -107,6 +107,7 @@ const ExperienceDashboard = () => {
   };
 
   const handleViewersControl = (
+    e,
     switchName: string | null,
     eventName: string,
     reponseName: string,
@@ -117,6 +118,9 @@ const ExperienceDashboard = () => {
     //  console.log("TARGET", event.target.value===controlName);
     //   if (event.target.value === controlName) {
     //     setIsChecked(true);
+    // const checked = e.target.checked;
+    // console.log("CHECJE", checked);
+    // if (!checked) return errorNotifier("CLOSED");
     setControlName(switchName === controlName ? null : switchName);
     handleAdminControls(
       eventName,
@@ -219,6 +223,7 @@ const ExperienceDashboard = () => {
     startResponse,
     params?.id,
     participants?.length,
+    allQuestions?.data?.length,
     socketConnection,
     specificExperience?.data?.experience_status,
   ]);
@@ -349,12 +354,13 @@ const ExperienceDashboard = () => {
                 isChecked={controlName === "correct-answer"}
                 value="correct-answer"
                 onChange={
-                  () => {
+                  (e) => {
                     if (
                       specificExperience?.data?.experience_status === "initial"
                     )
                       return errorNotifier("You have not started the game yet");
                     handleViewersControl(
+                      e,
                       "correct-answer",
                       SOCKET_EVENTS.adminShowCorrectAnswer,
                       SOCKET_EVENTS.showCorrectAnswerResponse,
@@ -397,6 +403,7 @@ const ExperienceDashboard = () => {
                   //     : "question-ranking"
                   // );
                   handleViewersControl(
+                    e,
                     "question-ranking",
                     SOCKET_EVENTS.adminShowQuestionRank,
                     SOCKET_EVENTS.showQuestionRankResponse,
@@ -431,6 +438,7 @@ const ExperienceDashboard = () => {
                   //   "leader-board" === controlName ? null : "leader-board"
                   // );
                   handleViewersControl(
+                    e,
                     "leader-board",
                     SOCKET_EVENTS.adminShowFinalRank,
                     SOCKET_EVENTS.showFinalRankResponse,
@@ -463,6 +471,7 @@ const ExperienceDashboard = () => {
                   if (specificExperience?.data?.experience_status !== "finish")
                     return errorNotifier("Please end the game to see winner");
                   handleViewersControl(
+                    e,
                     "show-winner",
                     SOCKET_EVENTS.adminShowFinalRank,
                     SOCKET_EVENTS.showFinalRankResponse,

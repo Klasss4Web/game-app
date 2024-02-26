@@ -49,6 +49,7 @@ const FinishedComponent = ({
     (participant) => participant?.id === loggedInParticipant?.id
   );
   console.log("getCurrentParticipantScore", getCurrentParticipantScore);
+
   useEffect(() => {
     // setLoading(false);
     socketConnection.on(SOCKET_EVENTS.experienceReactivity, (data: any) => {
@@ -62,6 +63,7 @@ const FinishedComponent = ({
       // setPosition(data?.display_type);
       // setLocalStorageString("position", data?.display_type);
       if (data?.display_type === "question") {
+        setPosition(data?.display_type);
         setResponse(data?.result?.question);
         setLocalStorageItem("question", data?.result?.question);
         // restart(setTimer());

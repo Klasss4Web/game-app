@@ -82,7 +82,9 @@ ActiveQuestionsCardProps) => {
           border={`.4rem solid ${COLORS.white}`}
           fontWeight="bold"
         >
-          <Text fontSize="1.4rem">{sliceIndex + 1}</Text>
+          <Text fontSize="1.4rem">
+            {allQuestions.length > 0 ? sliceIndex + 1 : 0}
+          </Text>
         </Flex>
         <FaArrowCircleRight size={60} cursor="pointer" onClick={handleNext} />
       </Flex>
