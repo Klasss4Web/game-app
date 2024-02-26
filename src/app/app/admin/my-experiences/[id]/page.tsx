@@ -54,6 +54,7 @@ const ExperienceDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [activeLoading, setActiveLoading] = useState(false);
   const [participants, setParticipants] = useState<Participants[]>([]);
+  const [startResponse, setStartResponse] = useState({});
   const [activeQuestionResponse, setActiveQuestionResponse] =
     useState<Questions>({} as Questions);
   const [sliceIndex, setSliceIndex] = useState(0);
@@ -225,9 +226,9 @@ const ExperienceDashboard = () => {
     (participant) => participant?.is_question_answered
   );
 
-   const activeQuestion = allQuestions?.data?.find(
-     (question) => question?.id === specificExperience?.data?.active_questions
-   );
+  const activeQuestion = allQuestions?.data?.find(
+    (question) => question?.id === specificExperience?.data?.active_questions
+  );
   console.log(
     "PARTICIPANTS",
     participants,
@@ -235,10 +236,8 @@ const ExperienceDashboard = () => {
     specificExperience,
     "participantsWhoAnsweredQuest",
     participantsWhoAnsweredQuest,
-    activeQuestion,
+    activeQuestion
   );
-
- 
 
   // const { data: questions, isLoadingQuestions } = useQuery({
   //   queryKey: ["questions"],
@@ -271,6 +270,8 @@ const ExperienceDashboard = () => {
       >
         <CountdownControlCard
           isFinished={isFinished}
+          startResponse={startResponse}
+          setStartResponse={setStartResponse}
           experience_id={specificExperience?.data?.id}
           experience_status={specificExperience?.data?.experience_status}
         />

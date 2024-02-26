@@ -17,17 +17,21 @@ import { errorNotifier } from "@/app/providers";
 
 type CountdownControlCardProps = {
   isFinished: boolean;
+  startResponse: any;
+  setStartResponse: (arg: any) => void;
   experience_id: string;
   experience_status: string;
 };
 
 const CountdownControlCard = ({
   isFinished,
+  startResponse,
+  setStartResponse,
   experience_id,
   experience_status,
 }: CountdownControlCardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [startResponse, setStartResponse] = useState({});
+
   const startExperience = (onClose?: () => void) => {
     if (experience_status === "finish")
       return errorNotifier("This experience is closed");
