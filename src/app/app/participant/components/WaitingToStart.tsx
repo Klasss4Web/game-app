@@ -10,18 +10,23 @@ import { SOCKET_EVENTS, socketClient } from "@/services/socket";
 import { errorNotifier } from "@/app/providers";
 import { Questions } from "@/types/questions";
 import { useSocket } from "@/contexts/SocketContext";
-import { setLocalStorageItem, setLocalStorageString } from "@/utils/localStorage";
+import {
+  setLocalStorageItem,
+  setLocalStorageString,
+} from "@/utils/localStorage";
 
 type WaitingToStartProps = {
   setPosition: (arg: string) => void;
   setResponse: (arg: Questions) => void;
   setLoading: (arg: boolean) => void;
+  setCountDown: (arg: number) => void;
 };
 
 const WaitingToStart = ({
   setPosition,
   setResponse,
   setLoading,
+  setCountDown,
 }: WaitingToStartProps) => {
   const { isVibrating } = useVibration();
   // const [response, setResponse] = useState({});
@@ -39,6 +44,7 @@ const WaitingToStart = ({
         setPosition(data?.result?.experience_status);
       } else {
         setPosition(data?.display_type);
+        setCountDown(10);
       }
       console.log(
         `EXP MSG RESP FOR ${SOCKET_EVENTS.experienceReactivity}`,

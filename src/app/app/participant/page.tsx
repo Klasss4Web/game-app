@@ -210,6 +210,7 @@ const Participant = () => {
             setPosition={setPosition}
             setResponse={setResponse}
             setLoading={setLoading}
+            setCountDown={setCountDown}
           />
         )}
         {position === "login" && (
