@@ -3,10 +3,17 @@
 import { errorNotifier } from "@/app/providers";
 import { CustomBtn } from "@/components/common/CustomBtn";
 import AuthWrapper from "@/components/auth/AuthWrapper";
-import { ACCESS_TOKEN, LOGGED_IN_USER, REFRESH_TOKEN } from "@/constants/appConstants";
+import {
+  ACCESS_TOKEN,
+  LOGGED_IN_USER,
+  REFRESH_TOKEN,
+} from "@/constants/appConstants";
 import { COLORS } from "@/constants/colors";
 import { ROUTES } from "@/constants/pageRoutes";
-import { setLocalStorageItem, setLocalStorageString } from "@/utils/localStorage";
+import {
+  setLocalStorageItem,
+  setLocalStorageString,
+} from "@/utils/localStorage";
 import {
   Flex,
   FormLabel,
@@ -41,7 +48,7 @@ const Login: React.FunctionComponent = () => {
 
     // TO BE REMOVED
     // setLocalStorageItem(LOGGED_IN_USER, { role: "dummyToken" });
-    router.push(ROUTES.create_experience);
+    // router.push(ROUTES.create_experience);
     const payload = {
       email,
       password,
@@ -54,7 +61,7 @@ const Login: React.FunctionComponent = () => {
     onSuccess: (loggedInData) => {
       console.log("loggedInData", loggedInData);
       setLocalStorageItem(LOGGED_IN_USER, loggedInData?.data);
-      setLocalStorageString(ACCESS_TOKEN, loggedInData?.data?.access_token)
+      setLocalStorageString(ACCESS_TOKEN, loggedInData?.data?.access_token);
       setLocalStorageString(REFRESH_TOKEN, loggedInData?.data?.refresh_token);
       // setLocalStorageItem(TOKEN, loggedInData?.data?.access_token);
       // if (loggedInData?.data?.role === "admin") {

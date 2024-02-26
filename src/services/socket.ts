@@ -215,6 +215,7 @@ export async function sendMessage(
 
     setLoading(false);
     onClose && onClose();
+    // window.location.reload();
   });
   socketClient.on(SOCKET_EVENTS.adminStartExperienceError, (error: any) => {
     // setData(data);
@@ -259,6 +260,7 @@ export async function endExperience(
     );
     setLoading(false);
     onClose && onClose();
+    // window.location.reload();
   });
   socketClient.on(SOCKET_EVENTS.adminEndExperienceError, (error: any) => {
     // setData(data);

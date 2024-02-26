@@ -115,14 +115,6 @@ const Participant = () => {
     // if (!socketConnection?.connected) {
     //   setRefresh(!refresh);
     // }
-    const audioElement = new Audio("/audio/backgroundSound.mp3");
-
-    if (!muteAudio) {
-      audioElement.play();
-      audioElement.loop = true;
-    } else {
-      audioElement.pause();
-    }
 
     if (participant?.experience_id === experienceId) {
       setCountDown(0);
@@ -135,11 +127,8 @@ const Participant = () => {
     } else {
       removeLocalStorageItem("participant");
     }
-    return () => {
-      audioElement.pause();
-    };
   }, [
-    muteAudio,
+    // muteAudio,
     participant?.experience_id,
     participant?.nonce_id,
     experienceId,
@@ -147,6 +136,20 @@ const Participant = () => {
     socketConnection?.connected,
     // position,
   ]);
+
+  useEffect(() => {
+    const audioElement = new Audio("/audio/backgroundSound.mp3");
+
+    if (!muteAudio) {
+      audioElement.play();
+      audioElement.loop = true;
+    } else {
+      audioElement.pause();
+    }
+    return () => {
+      audioElement.pause();
+    };
+  }, [muteAudio]);
 
   console.log(
     "START RESPONSE",

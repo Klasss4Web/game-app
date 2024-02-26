@@ -216,6 +216,7 @@ const ExperienceDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     // refresh,
+    startResponse,
     params?.id,
     participants?.length,
     socketConnection,
