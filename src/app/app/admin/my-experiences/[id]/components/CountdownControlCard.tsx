@@ -19,6 +19,7 @@ type CountdownControlCardProps = {
   isFinished: boolean;
   startResponse: any;
   setStartResponse: (arg: any) => void;
+  refetchExperience: () => void;
   experience_id: string;
   experience_status: string;
 };
@@ -27,6 +28,7 @@ const CountdownControlCard = ({
   isFinished,
   startResponse,
   setStartResponse,
+  refetchExperience,
   experience_id,
   experience_status,
 }: CountdownControlCardProps) => {
@@ -40,13 +42,20 @@ const CountdownControlCard = ({
       experience_id,
     };
     experience_status === "active"
-      ? endExperience(payload, setLoading, setStartResponse, onClose)
+      ? endExperience(
+          payload,
+          setLoading,
+          setStartResponse,
+          onClose,
+          refetchExperience
+        )
       : sendMessage(
           SOCKET_EVENTS.adminStartExperience,
           payload,
           setLoading,
           setStartResponse,
-          onClose
+          onClose,
+          refetchExperience
         );
   };
 

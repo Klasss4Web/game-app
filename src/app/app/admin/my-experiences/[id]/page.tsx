@@ -67,7 +67,11 @@ const ExperienceDashboard = () => {
     onExpire: () => console.warn("onExpire called"),
   });
 
-  const { data: specificExperience, isLoading } = useQuery({
+  const {
+    data: specificExperience,
+    isLoading,
+    refetch: refetchExperience,
+  } = useQuery({
     queryKey: ["specificExperience", params?.id],
     queryFn: () => getSpecificExperience(params?.id as string),
     retry: 3,
@@ -278,6 +282,7 @@ const ExperienceDashboard = () => {
           startResponse={startResponse}
           setStartResponse={setStartResponse}
           experience_id={specificExperience?.data?.id}
+          refetchExperience={refetchExperience}
           experience_status={specificExperience?.data?.experience_status}
         />
         <ActiveQuestionsCard

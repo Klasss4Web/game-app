@@ -194,7 +194,8 @@ export async function sendMessage(
   payload: any,
   setLoading: (arg: boolean) => void,
   setData: (arg: boolean) => void,
-  onClose?: () => void
+  onClose?: () => void,
+  refetchExperience?: () => void
 ) {
   setLoading(true);
   socketClient = io(socketBaseURL as string, {
@@ -214,6 +215,7 @@ export async function sendMessage(
     );
 
     setLoading(false);
+    refetchExperience && refetchExperience();
     onClose && onClose();
     // window.location.reload();
   });
@@ -232,7 +234,8 @@ export async function endExperience(
   payload: any,
   setLoading: (arg: boolean) => void,
   setData: (arg: boolean) => void,
-  onClose?: () => void
+  onClose?: () => void,
+  refetchExperience?: () => void
 ) {
   setLoading(true);
 
@@ -259,6 +262,7 @@ export async function endExperience(
       data
     );
     setLoading(false);
+    refetchExperience && refetchExperience();
     onClose && onClose();
     // window.location.reload();
   });
