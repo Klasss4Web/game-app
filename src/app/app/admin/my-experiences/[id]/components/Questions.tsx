@@ -37,7 +37,8 @@ type QuestionSectionProps = {
   // setAllQuestions: (arg: []) => void;
   setActiveQuestion: (
     payload: ActiveQuestionPayload,
-    questionNo: number
+    questionNo: number,
+    isQuestionInvalid: boolean
   ) => void;
   participants: Participants[];
   refetchQuestions: () => void;
@@ -116,25 +117,29 @@ QuestionSectionProps) => {
     // getExperienceQuestion(payload, setLoading, setAllQuestions);
   };
 
-  const handleSetActiveQuestion = (question_id: string, questionNo: number) => {
+  const handleSetActiveQuestion = (
+    question_id: string,
+    questionNo: number,
+    isQuestionInvalid: boolean
+  ) => {
     const payload = {
       experience_id,
       question_id,
     };
     console.log("ACTIVE QUES", payload);
-    setActiveQuestion(payload, questionNo);
+    setActiveQuestion(payload, questionNo, isQuestionInvalid);
     // setActiveQuestion(payload, setLoading, setActiveQuestionResponse);
   };
 
-  console.log(
-    "FORM VALUES",
-    formValues,
-    "ALL QUESTIONS",
-    allQuestions,
-    sliceIndex,
-    "activeQuestionResponse",
-    activeQuestionResponse
-  );
+  // console.log(
+  //   "FORM VALUES",
+  //   formValues,
+  //   "ALL QUESTIONS",
+  //   allQuestions,
+  //   sliceIndex,
+  //   "activeQuestionResponse",
+  //   activeQuestionResponse
+  // );
 
   return (
     <Box width="100%" color={COLORS.white} mt="2rem">
@@ -352,15 +357,23 @@ QuestionSectionProps) => {
                         color={COLORS.white}
                       >
                         <FormLabel>Question {index + 1}</FormLabel>
-                        <Text
-                          color={COLORS.orange}
-                          cursor="pointer"
-                          onClick={() =>
-                            handleSetActiveQuestion(answerOption?.id, index)
-                          }
-                        >
-                          Set as active
-                        </Text>
+                        {answerOption?.hasBeenActive ? (
+                          <Text color={COLORS.success}>Question Answered</Text>
+                        ) : (
+                          <Text
+                            color={COLORS.orange}
+                            cursor="pointer"
+                            onClick={() =>
+                              handleSetActiveQuestion(
+                                answerOption?.id,
+                                index,
+                                answerOption?.hasBeenActive
+                              )
+                            }
+                          >
+                            Set as active
+                          </Text>
+                        )}
                         {/* <Text
                         cursor="pointer"
                         onClick={() => removeAnswerField(index)}

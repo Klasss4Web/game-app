@@ -345,11 +345,6 @@ export async function setActiveQuestion(
   socketClient: any
 ) {
   setLoading(true);
-  // socketClient = io(socketBaseURL as string, {
-  //   extraHeaders: {
-  //     authorization: `Bearer ${token}`,
-  //   },
-  // });
   socketClient.emit(
     SOCKET_EVENTS.adminSetActiveQuestion,
     payload,

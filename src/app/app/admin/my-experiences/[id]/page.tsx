@@ -93,12 +93,15 @@ const ExperienceDashboard = () => {
   console.log("allQuest----", allQuestions, "startResponse", startResponse);
   const handleSetActiveQuestion = (
     payload: ActiveQuestionPayload,
-    questNo: number
+    questNo: number,
+    isQuestionInvalid: boolean
   ) => {
     if (specificExperience?.data?.experience_status === "finish")
       return errorNotifier("This experience is finished");
     if (specificExperience?.data?.experience_status === "initial")
       return errorNotifier("Please start experience to begin");
+    if (isQuestionInvalid)
+      return errorNotifier("This question has been answered");
     setControlName(null);
     setActiveQuestion(
       payload,
@@ -239,13 +242,15 @@ const ExperienceDashboard = () => {
     (question) => question?.id === specificExperience?.data?.active_questions
   );
   console.log(
-    "PARTICIPANTS",
-    participants,
+    "activeQuestionResponse",
+    activeQuestionResponse,
+    // "PARTICIPANTS",
+    // participants,
     "EXPERIENCES",
-    specificExperience,
-    "participantsWhoAnsweredQuest",
-    participantsWhoAnsweredQuest,
-    activeQuestion
+    specificExperience
+    // "participantsWhoAnsweredQuest",
+    // participantsWhoAnsweredQuest,
+    // activeQuestion
   );
 
   // const { data: questions, isLoadingQuestions } = useQuery({

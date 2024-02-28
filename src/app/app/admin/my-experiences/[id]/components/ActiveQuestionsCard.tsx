@@ -13,7 +13,8 @@ type ActiveQuestionsCardProps = {
   allQuestions: Questions[];
   setActiveQuestion: (
     payload: ActiveQuestionPayload,
-    questionNo: number
+    questionNo: number,
+    isQuestionInvalid: boolean
   ) => void;
   // totalQuestions: number;
 };
@@ -48,7 +49,7 @@ ActiveQuestionsCardProps) => {
     const questionNo = sliceIndex - 1;
     console.log("ACTIVE QUES", payload, "INDEX", allQuestions[sliceIndex - 1]);
     // await setActiveQuestion(payload, setLoading, setResponse);
-    await setActiveQuestion(payload, questionNo);
+    await setActiveQuestion(payload, questionNo, activeQuestion?.hasBeenActive);
     setSliceIndex(sliceIndex - 1);
   };
 
@@ -62,7 +63,7 @@ ActiveQuestionsCardProps) => {
       question_id: activeQuestion?.id,
     };
     console.log("ACTIVE QUES", payload, "INDEX", allQuestions[sliceIndex + 1]);
-    await setActiveQuestion(payload, questionNo);
+    await setActiveQuestion(payload, questionNo, activeQuestion?.hasBeenActive);
     setSliceIndex(sliceIndex + 1);
   };
 

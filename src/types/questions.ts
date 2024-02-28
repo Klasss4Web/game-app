@@ -14,6 +14,7 @@ export type Questions = OptionFields &
   AnswerFields & {
     order: number;
     point: number;
+    hasBeenActive: boolean;
   };
 
 export type ActiveQuestionPayload = {
