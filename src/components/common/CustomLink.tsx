@@ -15,7 +15,7 @@ export default function CustomLink({ to, text, color, hoverBg }: LinkProps) {
       href={to}
       // className="link-text"
       color={color || COLORS.u_black}
-      style={{ padding: "0 1rem", borderRadius: ".2rem" }}
+      style={{ padding: "0 .2rem", borderRadius: ".2rem" }}
       _hover={{
         color: COLORS.u_black,
         background: hoverBg || COLORS.headerGreen,

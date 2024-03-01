@@ -127,6 +127,8 @@ const ExperienceDashboard = () => {
     // const checked = e.target.checked;
     // console.log("CHECJE", checked);
     // if (!checked) return errorNotifier("CLOSED");
+    if (specificExperience?.data?.experience_status === "initial")
+      return errorNotifier("You have not started the game yet");
     setControlName(switchName === controlName ? null : switchName);
     handleAdminControls(
       eventName,
@@ -364,10 +366,6 @@ const ExperienceDashboard = () => {
                 value="correct-answer"
                 onChange={
                   (e) => {
-                    if (
-                      specificExperience?.data?.experience_status === "initial"
-                    )
-                      return errorNotifier("You have not started the game yet");
                     handleViewersControl(
                       "correct-answer",
                       SOCKET_EVENTS.adminShowCorrectAnswer,
