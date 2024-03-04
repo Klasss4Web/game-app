@@ -58,8 +58,8 @@ QuestionSectionProps) => {
     answerFields: [] as AnswerFields[],
   });
 
-  const [activeQuestionResponse, setActiveQuestionResponse] = useState({});
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [activeQuestionResponse, setActiveQuestionResponse] = useState({});
+  // const [loading, setLoading] = useState<boolean>(false);
   const [tabToShow, setTabToShow] = useState("allQuestions");
   const {
     // sliceIndex,
@@ -235,7 +235,10 @@ QuestionSectionProps) => {
                           align="center"
                           color={COLORS.white}
                         >
-                          <FormLabel>Question {index + 1}</FormLabel>
+                          {/* <FormLabel>Question {index + 1}</FormLabel> */}
+                          <FormLabel>
+                            Question {allQuestions.length + 1}
+                          </FormLabel>
                           <Text
                             cursor="pointer"
                             onClick={() => removeAnswerField(index)}

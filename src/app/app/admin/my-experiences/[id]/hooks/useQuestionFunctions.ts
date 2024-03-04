@@ -85,7 +85,8 @@ const useQuestionFunctions = (
     setFormValues((prev: any) => ({
       ...prev,
       answerFields: [
-        ...prev?.answerFields,
+        // Uncomment this line if you want to add multiple questions
+        // ...prev?.answerFields,
         { text: "", answers: [], order: null },
       ],
     }));

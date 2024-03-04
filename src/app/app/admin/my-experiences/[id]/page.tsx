@@ -231,7 +231,7 @@ const ExperienceDashboard = () => {
     startResponse,
     params?.id,
     participants?.length,
-    allQuestions?.data?.length,
+    // allQuestions?.data?.length,
     socketConnection,
     specificExperience?.data?.experience_status,
   ]);
